@@ -219,9 +219,25 @@ map("n", "<leader>yy", '"+Y', { desc = "Yank Line to System Clipboard" })
 -- Pasting FROM the system clipboard
 map("n", "<leader>ap", 'ggVG"+p', { desc = "Replace everything" })
 
+-- -- Function to toggle LSP clients for the current buffer
+-- local function toggle_lsp()
+--   local clients = vim.lsp.get_active_clients({ bufnr = 0 })
+--   if #clients > 0 then
+--     -- LSP is active, so stop it
+--     print("Stopping LSP clients for current buffer...")
+--     vim.lsp.stop_client(clients)
+--   else
+--     -- LSP is inactive, so start it
+--     print("Starting LSP for current buffer...")
+--     -- vim.lsp.start() will start clients based on filetype and root dir
+--     vim.lsp.start(nil, { bufnr = 0 })
+--   end
+-- end
+--
+-- -- Map it to <leader>sl (for "stop lsp")
+-- vim.keymap.set('n', '<leader>tlsp', toggle_lsp, { desc = 'Toggle LSP (Start/Stop)' })
 
-
-
+--                             LSP                            ------------
 -- Function to toggle LSP clients for the current buffer
 local function toggle_lsp()
   local clients = vim.lsp.get_active_clients({ bufnr = 0 })
@@ -230,13 +246,11 @@ local function toggle_lsp()
     print("Stopping LSP clients for current buffer...")
     vim.lsp.stop_client(clients)
   else
-    -- LSP is inactive, so start it
+    -- LSP is inactive, so re-trigger FileType autocommands
+    -- This will make lspconfig (or your setup) attach the clients again
     print("Starting LSP for current buffer...")
-    -- vim.lsp.start() will start clients based on filetype and root dir
-    vim.lsp.start(nil, { bufnr = 0 })
+    vim.cmd('doautocmd <nomodeline> FileType')
   end
 end
+vim.keymap.set('n', '<leader>tt', toggle_lsp, { desc = 'Toggle LSP (Start/Stop)' })
 
--- Map it to <leader>sl (for "stop lsp")
-vim.keymap.set('n', '<leader>tlsp', toggle_lsp, { desc = 'Toggle LSP (Start/Stop)' })
---
