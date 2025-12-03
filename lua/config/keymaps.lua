@@ -212,32 +212,29 @@ vim.keymap.set("n", "<leader>aa", "mzggVG\"+y`z:delmarks z<CR>", { desc = "Selec
 map("n", "<leader>pv", vim.cmd.Ex)
 
 -- Yanking (copying) TO the system clipboard
-map("n", "<leader>y", '"+y', { desc = "Yank to System Clipboard" })
-map("v", "<leader>y", '"+y', { desc = "Yank to System Clipboard" })
-map("n", "<leader>yy", '"+Y', { desc = "Yank Line to System Clipboard" })
+vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true })
+vim.keymap.set("v", "<leader>y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>yy", '"+Y', { desc = "Yank Line to System Clipboard", noremap = true, silent = true })
 
--- Pasting FROM the system clipboard
-map("n", "<leader>ap", 'ggVG"+p', { desc = "Replace everything" })
+-- FULL CORRECTED COMMAND SNIPPET
+vim.keymap.set("n", "<leader>ap", function()
+  -- The 't' means execute the keys as if typed (normal mode commands)
+  vim.api.nvim_feedkeys('ggVG"+p', 't', true)
+end, {
+  desc = "Replace everything with clipboard",
+  noremap = true,
+  silent = true,
+})
 
--- -- Function to toggle LSP clients for the current buffer
--- local function toggle_lsp()
---   local clients = vim.lsp.get_active_clients({ bufnr = 0 })
---   if #clients > 0 then
---     -- LSP is active, so stop it
---     print("Stopping LSP clients for current buffer...")
---     vim.lsp.stop_client(clients)
---   else
---     -- LSP is inactive, so start it
---     print("Starting LSP for current buffer...")
---     -- vim.lsp.start() will start clients based on filetype and root dir
---     vim.lsp.start(nil, { bufnr = 0 })
---   end
--- end
---
--- -- Map it to <leader>sl (for "stop lsp")
--- vim.keymap.set('n', '<leader>tlsp', toggle_lsp, { desc = 'Toggle LSP (Start/Stop)' })
-
---                             LSP                            ------------
+-- FULL CORRECTED COMMAND SNIPPET for Black Hole Delete
+vim.keymap.set("n", "<leader>AD", function()
+  -- Deletes entire file using the black hole register
+  vim.api.nvim_feedkeys('ggVG"_d', 't', true)
+end, {
+  desc = "Black hole remove everything",
+  noremap = true,
+  silent = true,
+})
 -- Function to toggle LSP clients for the current buffer
 local function toggle_lsp()
   local clients = vim.lsp.get_active_clients({ bufnr = 0 })
@@ -254,3 +251,13 @@ local function toggle_lsp()
 end
 vim.keymap.set('n', '<leader>tt', toggle_lsp, { desc = 'Toggle LSP (Start/Stop)' })
 
+
+-- FULL EDITED CODE SNIPPET (Lua)
+-- Add this to your configuration structure (e.g., in a spec that runs after 'nvim-lspconfig')
+
+--Disable by default
+-- vim.lsp.inlay_hint.enable(false)
+--
+vim.keymap.set('n', '<leader>ti', function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = 'Toggle Inlay Hints' })
