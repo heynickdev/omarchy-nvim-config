@@ -1,31 +1,30 @@
 -- ~/.config/nvim/lua/plugins/lsp.lua
 return {
-  -- Override the nvim-lspconfig plugin settings
   {
     "neovim/nvim-lspconfig",
-    ---@class PluginLspOpts
     opts = {
-      ---@type lspconfig.options
       servers = {
-        angularls = {
-          enabled = false,
-        },
-        gopls = {}
+        -- Existing servers
+        angularls = { enabled = false },
+        gopls = {},
 
-        -- If you want to configure tsserver to potentially resolve the SIGTERM error
-        -- (though that error is often harmless/environmental), you could add an entry
-        -- like this to set a memory limit for the Node process:
-        -- tsserver = {
-        --   settings = {
-        --     tsserver = {
-        --       maxTsServerMemory = 4096, -- 4GB, adjust as needed
-        --     },
-        --   },
-        -- },
+        -- 1. Enable Templ LSP
+        templ = {},
+
+        -- 2. Configure Emmet to work with Templ
+        emmet_language_server = {
+          filetypes = {
+            "html",
+            "typescriptreact",
+            "javascriptreact",
+            "css",
+            "sass",
+            "scss",
+            "less",
+            "templ",
+          },
+        },
       },
-      -- You can also add setup logic here if you need to integrate
-      -- with external tools, like for your Next.js development.
     },
   },
 }
-
