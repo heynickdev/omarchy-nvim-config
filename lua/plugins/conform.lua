@@ -4,6 +4,7 @@ return {
     -- 1. Switch formatter to pg_format
     formatters_by_ft = {
       sql = { "pg_format" },
+      vue = { "eslint_d" },
     },
 
     -- 2. Configure capitalization rules

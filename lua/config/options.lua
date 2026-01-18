@@ -32,7 +32,7 @@ vim.opt.isfname:append("@-@")
 -- --- NETRW & CLIPBOARD ---
 vim.g.netrw_banner = 0
 vim.g.netrw_bufsettings = "noma nomod nu rnu nobl nowrap ro"
-vim.opt.clipboard = "unnamedplus"
+-- vim.opt.clipboard = "unnamedplus"
 
 -- --- KEYBOARD GLOBALS ---
 vim.g.maplocalleader = ";"
