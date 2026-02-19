@@ -5,6 +5,7 @@ return {
     formatters_by_ft = {
       sql = { "pg_format" },
       -- vue = { "eslint_d" },
+      htmldjango = { "djlint" },
     },
 
     -- 2. Configure capitalization rules
