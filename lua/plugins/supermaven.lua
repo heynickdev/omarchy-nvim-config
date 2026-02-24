@@ -27,14 +27,16 @@ return {
   -- 1. Ensure the plugin is always loaded (VeryLazy) so the Lua API is ready for the keymap.
   -- You could also use 'lazy = false' but 'VeryLazy' is generally better for startup time.
   event = "VeryLazy",
-  
+
   -- 2. Use the 'config' function to run a command immediately after setup is complete.
   config = function(_, opts)
     -- Call the default setup function
     require("supermaven-nvim").setup(opts)
-    
     -- 🛑 CRITICAL STEP: Immediately stop the service after it starts up
     -- This ensures it is DISABLED on load, fulfilling your primary requirement.
+    vim.defer_fn(function()
+      vim.cmd("SupermavenUseFree")
+    end, 100)
     local supermaven = require("supermaven-nvim.api")
     if supermaven.is_running() then
       supermaven.stop()
