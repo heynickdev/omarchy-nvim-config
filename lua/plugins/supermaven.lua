@@ -47,7 +47,6 @@ return {
     -- but you can add other options here, like filetype ignores, etc.
     keymaps = {
             accept_suggestion = false,
-
         },
   },
 
