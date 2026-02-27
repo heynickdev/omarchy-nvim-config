@@ -9,20 +9,20 @@ return {
         -- High-contrast grayscale palette
         local colors = {
           -- Backgrounds (Ink)
-          bg_dark      = "#000000", -- Pure Black
-          bg_main      = "#0a0a0a", -- Near Black
-          bg_float     = "#121212", -- Deep Gray
-          bg_visual    = "#333333", -- Screentone Gray
-          
+          bg_dark = "#000000", -- Pure Black
+          bg_main = "#0a0a0a", -- Near Black
+          bg_float = "#121212", -- Deep Gray
+          bg_visual = "#333333", -- Screentone Gray
+
           -- Borders & Shading
-          shade_dark   = "#444444", -- Darker Screentone
-          shade_mid    = "#888888", -- Neutral Gray
-          shade_light  = "#bbbbbb", -- Light Gray
-          
+          shade_dark = "#444444", -- Darker Screentone
+          shade_mid = "#888888", -- Neutral Gray
+          shade_light = "#bbbbbb", -- Light Gray
+
           -- Foregrounds (Paper)
-          fg_main      = "#ffffff", -- Pure White
-          fg_dim       = "#dddddd", -- Off White
-          fg_ghost     = "#666666", -- Faded Ink (Comments)
+          fg_main = "#ffffff", -- Pure White
+          fg_dim = "#dddddd", -- Off White
+          fg_ghost = "#666666", -- Faded Ink (Comments)
         }
 
         vim.cmd("highlight clear")
@@ -79,7 +79,7 @@ return {
 
         -- Terminal Colors (Purely grayscale)
         for i = 0, 15 do
-          local gray = string.format("#%02x%02x%02x", i*16+15, i*16+15, i*16+15)
+          local gray = string.format("#%02x%02x%02x", i * 16 + 15, i * 16 + 15, i * 16 + 15)
           vim.g["terminal_color_" .. i] = gray
         end
         -- Adjusting specific terminal colors for visibility
