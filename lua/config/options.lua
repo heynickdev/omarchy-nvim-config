@@ -36,7 +36,7 @@ vim.g.netrw_bufsettings = "noma nomod nu rnu nobl nowrap ro" -- Applies strict b
 
 -- --- KEYBOARD GLOBALS ---
 -- vim.g.maplocalleader = ";" -- Sets the local leader key, typically used for filetype-specific plugin bindings, to the semicolon.
-vim.g.autoformat = true -- A global flag read by plugins (like conform.nvim) to disable automatic code formatting on save by default.
+vim.g.autoformat = false -- A global flag read by plugins (like conform.nvim) to disable automatic code formatting on save by default.
 
 -- --- TEMPL & HTML FILETYPE FIXES ---
 vim.filetype.add({ -- Invokes the Neovim filetype API to define custom file extension mappings.
