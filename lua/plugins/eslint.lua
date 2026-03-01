@@ -48,14 +48,6 @@ return {
         -- Silent the stylistic rules in your IDE, but still auto fix them
         rulesCustomizations = customizations,
       },
-      on_attach = function(client, bufnr)
-        -- Optional: specific keybinds or logic for eslint on attach
-        -- Use client.server_capabilities to check support if needed
-        vim.api.nvim_create_autocmd("BufWritePre", {
-          buffer = bufnr,
-          command = "EslintFixAll",
-        })
-      end,
     })
   end,
 }

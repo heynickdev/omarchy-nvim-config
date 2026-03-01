@@ -22,6 +22,7 @@ return {
             "scss",
             "less",
             "templ",
+            "htmldjango",
           },
         },
       },
