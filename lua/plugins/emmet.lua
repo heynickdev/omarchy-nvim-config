@@ -17,9 +17,16 @@ return {
             "pug",
             "typescriptreact",
             "vue",
-            "templ", -- Added templ since you mentioned you use it
+            "templ", 
+            "htmldjango"
           },
           init_options = {
+            includeLanguages = {
+              templ = "html",
+              htmldjango = "html",
+            },
+            showExpandedAbbreviation = "always",
+            showAbbreviationSuggestions = true,
             -- Define custom snippets to override defaults
             html = {
               snippets = {
@@ -45,8 +52,13 @@ return {
             "typescriptreact",
             "vue",
             "templ",
+            "htmldjango",
           },
           init_options = {
+            includeLanguages = {
+              templ = "html",
+              htmldjango = "html",
+            },
             html = {
               snippets = {
                 form = "form",

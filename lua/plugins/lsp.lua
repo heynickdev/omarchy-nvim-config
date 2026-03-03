@@ -11,7 +11,7 @@ return {
         -- 1. Enable Templ LSP
         templ = {},
 
-        -- 2. Configure Emmet to work with Templ
+        -- 2. Configure Emmet to work with Templ and Django
         emmet_language_server = {
           filetypes = {
             "html",
@@ -23,6 +23,14 @@ return {
             "less",
             "templ",
             "htmldjango",
+          },
+          init_options = {
+            includeLanguages = {
+              templ = "html",
+              htmldjango = "html",
+            },
+            showExpandedAbbreviation = "always",
+            showAbbreviationSuggestions = true,
           },
         },
       },
