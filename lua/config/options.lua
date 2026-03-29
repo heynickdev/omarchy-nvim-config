@@ -82,3 +82,7 @@ vim.keymap.set(
   end,
   { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" }
 ) -- Configuration table: 'expr=true' executes the returned string, 'replace_keycodes' translates <CR>/<Esc> to actual keystrokes, and 'desc' labels the keymap.
+
+-- overwrite shell
+vim.opt.shell = "fish"
+vim.env.SHELL = "fish"
