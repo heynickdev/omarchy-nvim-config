@@ -28,7 +28,7 @@ return {
       -- Customizing clang-format behavior globally
       clang_format = {
         prepend_args = {
-          "--style={IndentWidth: 4, BasedOnStyle: llvm, BreakBeforeBraces: Attach}",
+          "--style={IndentWidth: 2, BasedOnStyle: llvm, BreakBeforeBraces: Attach}",
         },
       },
     },
