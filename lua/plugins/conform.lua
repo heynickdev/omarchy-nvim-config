@@ -32,10 +32,5 @@ return {
         },
       },
     },
-    -- 3. Ensure format on save is active
-    format_on_save = {
-      lsp_fallback = true,
-      timeout_ms = 500,
-    },
   },
 }
