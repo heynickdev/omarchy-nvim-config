@@ -311,3 +311,10 @@ vim.keymap.set("n", "<leader>tt", toggle_lsp, { desc = "Toggle LSP (Start/Stop)"
 vim.keymap.set("n", "<leader>ti", function() -- Binds Space+ti to toggle native LSP inlay hints.
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) -- Queries the current state of inlay hints and flips the boolean to enable or disable them dynamically.
 end, { desc = "Toggle Inlay Hints" }) -- Closes the function and sets the description.
+
+-- tmux
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+vim.keymap.set("n", "<M-h>", "<cmd>silent !tmux neww tmux-sessionizer -s 0<CR>")
+vim.keymap.set("n", "<M-t>", "<cmd>silent !tmux neww tmux-sessionizer -s 1<CR>")
+vim.keymap.set("n", "<M-n>", "<cmd>silent !tmux neww tmux-sessionizer -s 2<CR>")
+vim.keymap.set("n", "<M-s>", "<cmd>silent !tmux neww tmux-sessionizer -s 3<CR>")

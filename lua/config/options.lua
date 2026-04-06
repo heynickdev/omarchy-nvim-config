@@ -86,3 +86,4 @@ vim.keymap.set(
 -- overwrite shell
 vim.opt.shell = "fish"
 vim.env.SHELL = "fish"
+vim.opt.mouse = ""

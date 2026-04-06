@@ -4,8 +4,11 @@ return {
   dependencies = {
     "nvim-treesitter/nvim-treesitter",
     "nvim-lua/plenary.nvim",
-    "hrsh7th/nvim-cmp", -- You already have this from LazyVim
+    "hrsh7th/nvim-cmp",
+    "neovim/nvim-lspconfig", -- Ensures LSP config is built before this hooks in
   },
+  -- Delay loading until a file is actually opened to prevent LSP crashes
+  event = { "BufReadPost", "BufNewFile", "BufWritePre" },
   -- This plugin has a lot of features, so we need a `config` block
   config = function()
     require("tailwind-tools").setup({
@@ -18,7 +21,7 @@ return {
         -- Set to true to add color swatches to the completion menu
         color_guide = true,
       },
-      -- This ensures it works in your React/Next.js files
+      -- This ensures it works in your project files
       filetypes = {
         "javascript",
         "javascriptreact",
@@ -27,7 +30,9 @@ return {
         "html",
         "css",
         "templ",
-        "go", -- For templ
+        "go",
+        "svelte",
+        "vue",
       },
     })
   end,
