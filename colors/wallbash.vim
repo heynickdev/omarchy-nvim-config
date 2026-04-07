@@ -1,1 +1,0 @@
-/home/nick/.cache/hyde/wallbash/nvim.vim
