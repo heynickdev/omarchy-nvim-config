@@ -2,7 +2,7 @@ return {
   "folke/snacks.nvim",
   opts = {
     scroll = {
-      enabled = false, -- Disable scrolling animations
+      enabled = true, -- Re-enables scrolling if the content overflows your screen
     },
     dashboard = {
       enabled = true,
@@ -11,11 +11,10 @@ return {
         {
           pane = 2,
           section = "terminal",
-          -- cmd = "colorscript -e pokemon",
-          -- cmd = "colorscript -e square",
-          cmd = "pokemon-colorscripts -r --no-title",
-          height = 20,
+          cmd = "pokemon-colorscripts -r --no-title && sleep 1000",
+          height = 14,
           padding = 1,
+          indent = 8,
         },
         { section = "keys", gap = 1, padding = 1 },
         {
@@ -50,7 +49,7 @@ return {
                 vim.fn.jobstart("gh issue list --web", { detach = true })
               end,
               icon = " ",
-              height = 7,
+              height = 3,
             },
             {
               icon = " ",
@@ -60,13 +59,13 @@ return {
               action = function()
                 vim.fn.jobstart("gh pr list --web", { detach = true })
               end,
-              height = 7,
+              height = 3,
             },
             {
               icon = " ",
               title = "Git Status",
               cmd = "git --no-pager diff --stat -B -M -C",
-              height = 10,
+              height = 5,
             },
           }
           return vim.tbl_map(function(cmd)
@@ -76,7 +75,7 @@ return {
               enabled = in_git,
               padding = 1,
               ttl = 5 * 60,
-              indent = 3,
+              indent = 2,
             }, cmd)
           end, cmds)
         end,

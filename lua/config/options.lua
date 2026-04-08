@@ -84,6 +84,6 @@ vim.keymap.set(
 ) -- Configuration table: 'expr=true' executes the returned string, 'replace_keycodes' translates <CR>/<Esc> to actual keystrokes, and 'desc' labels the keymap.
 
 -- overwrite shell
-vim.opt.shell = "fish"
-vim.env.SHELL = "fish"
+vim.opt.shell = "/bin/bash"
+vim.env.SHELL = "/bin/bash"
 vim.opt.mouse = ""
