@@ -256,36 +256,26 @@ map("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true }) -- Bi
 Snacks.toggle.zoom():map("<leader>wm"):map("<leader>uZ") -- Sets up both Space+wm and Space+uZ to maximize the current window split, hiding the others until toggled again.
 Snacks.toggle.zen():map("<leader>uz") -- Binds Space+uz to enter a distraction-free "Zen Mode" utilizing the Snacks API.
 
--- Select all
-map("n", "<leader>a", "ggVG", { desc = "select all" }) -- Binds Space+a to jump to the top (gg), enter visual line mode (V), and jump to the bottom (G), highlighting the whole file.
--- map("n", "<leader>aa", 'ggVG\"+yG', { desc = "Select All and copy" }) -- (Commented out) Legacy mapping attempt to select and copy.
-vim.keymap.set("n", "<leader>aa", 'mzggVG"+y`z:delmarks z<CR>', { desc = "Select all, copy, and return cursor" }) -- Binds Space+aa to set a mark (z), highlight all, copy to clipboard ("+y), return to mark (`z), and clean up the mark.
-map("n", "<leader>pv", vim.cmd.Ex) -- Binds Space+pv to open Neovim's default Netrw directory explorer in the current window.
+-- ==========================================
+-- BUFFER-WIDE ACTIONS (Prefix <leader>a)
+-- ==========================================
+vim.keymap.set("n", "<leader>av", "ggVG", { desc = "Select All" }) -- visual all
+vim.keymap.set("n", "<leader>ac", 'mzggVG"+y`z:delmarks z<CR>', { desc = "Copy All to Clipboard" }) -- copy all
+vim.keymap.set("n", "<leader>ad", function() -- delete all
+  vim.api.nvim_feedkeys('ggVG"_d', "t", true)
+end, { desc = "Delete All (Black Hole)", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ap", function() -- paste all
+  vim.api.nvim_feedkeys('ggVG"+p', "t", true)
+end, { desc = "Replace All with Clipboard", noremap = true, silent = true })
+
+-- Changed from pv to pe to prevent overlap with yank history (<leader>p)
+map("n", "<leader>pe", vim.cmd.Ex, { desc = "Project Explorer (Netrw)" }) 
 
 -- Yanking (copying) TO the system clipboard
 vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+y in normal mode to initiate a copy operation routed to the OS clipboard.
 vim.keymap.set("v", "<leader>y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+y in visual mode to copy the active selection directly to the OS clipboard.
 vim.keymap.set("n", "<leader>yy", '"+Y', { desc = "Yank Line to System Clipboard", noremap = true, silent = true }) -- Binds Space+yy to copy the entire current line to the OS clipboard.
 
--- FULL CORRECTED COMMAND SNIPPET
-vim.keymap.set("n", "<leader>ap", function() -- Binds Space+ap to replace the entire buffer with clipboard contents.
-  -- The 't' means execute the keys as if typed (normal mode commands) -- (User-provided comment)
-  vim.api.nvim_feedkeys('ggVG"+p', "t", true) -- Programmatically simulates typing: go to top, select all, and paste from the system clipboard ("+p).
-end, { -- Opens the options table.
-  desc = "Replace everything with clipboard", -- Describes the function for WhichKey.
-  noremap = true, -- Ensures these keys trigger built-in actions, ignoring other user mappings.
-  silent = true, -- Suppresses command-line output during execution.
-}) -- Closes the setup table.
-
--- FULL CORRECTED COMMAND SNIPPET for Black Hole Delete
-vim.keymap.set("n", "<leader>AD", function() -- Binds Space+AD to delete the entire file without overwriting registers.
-  -- Deletes entire file using the black hole register -- (User-provided comment)
-  vim.api.nvim_feedkeys('ggVG"_d', "t", true) -- Simulates typing: go to top, select all, and delete into the void register ("_d) so it doesn't pollute your clipboard.
-end, { -- Opens the options table.
-  desc = "Black hole remove everything", -- Describes the action.
-  noremap = true, -- Prevents recursive mapping evaluation.
-  silent = true, -- Prevents visual output noise.
-}) -- Closes the setup table.
 -- Function to toggle LSP clients for the current buffer
 local function toggle_lsp() -- Defines a custom function to handle restarting memory-heavy language servers.
   local clients = vim.lsp.get_active_clients({ bufnr = 0 }) -- Queries the Neovim LSP API to get a list of servers attached to the current buffer.

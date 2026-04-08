@@ -33,7 +33,7 @@ vim.opt.isfname:append("@-@") -- Appends the '@' symbol to valid filename charac
 -- --- NETRW & CLIPBOARD ---
 vim.g.netrw_banner = 0 -- Hides the large, multiline help banner at the top of Vim's default Netrw file explorer.
 vim.g.netrw_bufsettings = "noma nomod nu rnu nobl nowrap ro" -- Applies strict buffer settings to Netrw windows: unmodifiable, numbers on, no buffer listing, no wrap, read-only.
--- vim.opt.clipboard = "unnamedplus" -- (Commented out) If active, this would force Neovim to use the system clipboard for all yank and paste operations.
+vim.opt.clipboard = "unnamedplus" -- Relies purely on Neovim's native Wayland detection to bridge the system clipboard without complex overrides.
 
 -- --- KEYBOARD GLOBALS ---
 -- vim.g.maplocalleader = ";" -- Sets the local leader key, typically used for filetype-specific plugin bindings, to the semicolon.
@@ -48,7 +48,7 @@ vim.filetype.add({ -- Invokes the Neovim filetype API to define custom file exte
 
 -- Combine your templ logic into one clean autocmd
 vim.api.nvim_create_autocmd("FileType", { -- Registers an autocommand that fires whenever a buffer's filetype is set.
-  pattern = { "templ", "html" }, -- Ensures this logic only triggers for templ and html files, covering your Go and HTMX frontend work.
+  pattern = { "templ", "html" }, -- Ensures this logic only triggers for templ and html files.
   callback = function() -- Defines the anonymous Lua function to run when the autocommand triggers.
     vim.bo.indentexpr = "nvim_treesitter#indent()" -- Sets the buffer-local option to use Treesitter's syntax tree for calculating accurate indentation.
     vim.opt_local.shiftwidth = 2 -- Forces the buffer-local shift width to 2 spaces.
@@ -83,7 +83,4 @@ vim.keymap.set(
   { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" }
 ) -- Configuration table: 'expr=true' executes the returned string, 'replace_keycodes' translates <CR>/<Esc> to actual keystrokes, and 'desc' labels the keymap.
 
--- overwrite shell
-vim.opt.shell = "/bin/bash"
-vim.env.SHELL = "/bin/bash"
 vim.opt.mouse = ""

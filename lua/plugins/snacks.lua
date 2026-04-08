@@ -2,7 +2,7 @@ return {
   "folke/snacks.nvim",
   opts = {
     scroll = {
-      enabled = true, -- Re-enables scrolling if the content overflows your screen
+      enabled = false, -- Re-enables scrolling if the content overflows your screen
     },
     dashboard = {
       enabled = true,
