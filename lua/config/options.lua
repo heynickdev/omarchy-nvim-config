@@ -84,3 +84,6 @@ vim.keymap.set(
 ) -- Configuration table: 'expr=true' executes the returned string, 'replace_keycodes' translates <CR>/<Esc> to actual keystrokes, and 'desc' labels the keymap.
 
 vim.opt.mouse = ""
+-- Disable unused providers to speed up startup and clean up checkhealth
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
