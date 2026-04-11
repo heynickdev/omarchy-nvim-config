@@ -302,3 +302,14 @@ vim.keymap.set("n", "<leader>ti", function() -- Binds Space+ti to toggle native 
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) -- Queries the current state of inlay hints and flips the boolean to enable or disable them dynamically.
 end, { desc = "Toggle Inlay Hints" }) -- Closes the function and sets the description.
 
+
+-- Delete the default mapping first to ensure no conflicts
+pcall(vim.keymap.del, "n", "<leader>wv")
+
+-- Create the new mapping
+-- 'remap = true' is required so that Neovim recognizes <leader>pe as a 
+-- secondary mapping instead of literal keystrokes.
+vim.keymap.set("n", "<leader>wv", "<C-w>v<leader>pe", { 
+    remap = true, 
+    desc = "Split window vertically and open Project Explorer" 
+})
