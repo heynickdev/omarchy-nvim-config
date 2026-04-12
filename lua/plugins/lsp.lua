@@ -36,6 +36,7 @@ return {
             "less",
             "templ",
             "htmldjango",
+            "go",
           },
           init_options = {
             includeLanguages = {

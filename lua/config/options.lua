@@ -7,7 +7,7 @@ vim.opt.relativenumber = true -- Shows line numbers relative to the cursor posit
 vim.g.lazyvim_animation = true -- Disables the UI animations that LazyVim adds by default.
 vim.opt.wrap = false -- Disables line wrapping; long lines will extend off the edge of the screen.
 vim.opt.scrolloff = 18 -- Enforces a minimum of 8 lines visible above and below the cursor when scrolling vertically.
-vim.opt.sidescrolloff = 8
+vim.opt.sidescrolloff = 3
 vim.opt.signcolumn = "yes" -- Always displays the gutter column on the left (used for git signs, linting icons) to stop text from shifting.
 vim.opt.colorcolumn = "150" -- Renders a vertical highlight at the 80th character mark to help visualize line length limits.
 vim.opt.updatetime = 50 -- Lowers the delay (in milliseconds) before Vim triggers CursorHold events, making the UI and plugins highly responsive.
@@ -84,6 +84,3 @@ vim.keymap.set(
 ) -- Configuration table: 'expr=true' executes the returned string, 'replace_keycodes' translates <CR>/<Esc> to actual keystrokes, and 'desc' labels the keymap.
 
 vim.opt.mouse = ""
--- Disable unused providers to speed up startup and clean up checkhealth
-vim.g.loaded_perl_provider = 0
-vim.g.loaded_ruby_provider = 0

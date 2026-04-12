@@ -61,7 +61,7 @@ return {
       formatters_by_ft = {
         -- This maps the standard LazyVim format action to ESLint for .vue files
         vue = { "eslint" },
-        
+
         -- You can easily add other filetypes here later if needed, for example:
         -- javascript = { "eslint" },
         -- typescript = { "eslint" },

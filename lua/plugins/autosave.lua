@@ -1,10 +1,7 @@
 -- some recommended exclusions. you can use `:lua print(vim.bo.filetype)` to
 -- get the filetype string of the current buffer
 local excluded_filetypes = {
-  -- this one is especially useful if you use neovim as a commit message editor
   "gitcommit",
-  -- most of these are usually set to non-modifiable, which prevents autosaving
-  -- by default, but it doesn't hurt to be extra safe.
   "NvimTree",
   "Outline",
   "TelescopePrompt",

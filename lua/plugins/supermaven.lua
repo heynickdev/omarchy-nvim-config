@@ -1,27 +1,3 @@
--- return {
---   "supermaven-inc/supermaven-nvim",
---   -- ... other config like 'opts = {...}' ...
---   keys = {
---     -- Use the Lua API function instead of the command
---     {
---       "<leader>cp",
---       function()
---         local supermaven = require("supermaven-nvim.api")
---         local is_running = supermaven.is_running()
---         supermaven.toggle()
---
---         -- Check the state *before* the toggle to determine the *new* state
---         local new_state_msg = is_running and "Disabled" or "Enabled"
---         vim.notify("Supermaven " .. new_state_msg, vim.log.levels.INFO, { title = "Supermaven" })
---       end,
---       desc = "Toggle Supermaven",
---     },
---     accept_word = "<C-l>",
---   },
---   disable_keymaps = true,
--- }
-
-
 return {
   "supermaven-inc/supermaven-nvim",
   -- 1. Ensure the plugin is always loaded (VeryLazy) so the Lua API is ready for the keymap.
@@ -48,8 +24,8 @@ return {
     -- The 'disable_on_startup' option is not officially supported and is ignored,
     -- but you can add other options here, like filetype ignores, etc.
     keymaps = {
-            accept_suggestion = false,
-        },
+      accept_suggestion = false,
+    },
   },
 
   keys = {
@@ -70,6 +46,6 @@ return {
     -- Keep your custom keymap for accepting word
     accept_suggestion = "<C-l>",
   },
-  
+
   disable_keymaps = true, -- Retained from your snippet
 }
