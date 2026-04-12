@@ -12,7 +12,7 @@ return {
           pane = 2,
           section = "terminal",
           cmd = "pokemon-colorscripts -r --no-title && sleep 1000",
-          height = 14,
+          height = 15,
           padding = 1,
           indent = 8,
         },
