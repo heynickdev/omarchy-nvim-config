@@ -6,6 +6,7 @@ return {
   opts = {
     -- Be explicit by using the 'filetypes' key
     filetypes = {
+      "svelte",
       "css",
       "javascript",
       "javascriptreact",

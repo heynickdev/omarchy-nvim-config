@@ -3,16 +3,37 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        -- Existing servers
+        -- 1. Svelte Configuration
+        svelte = {
+          keys = {
+            { "<leader>co", "<cmd>SvelteOutline<cr>", desc = "Svelte Outline" },
+          },
+          settings = {
+            svelte = {
+              plugin = {
+                -- Enables completions for HTML, CSS, and JS/TS within .svelte files
+                html = { completions = { enable = true } },
+                css = { completions = { enable = true } },
+                typescript = {
+                  completions = { enable = true },
+                  diagnostics = { enable = true },
+                },
+                -- Optional: Disable the "missing-declaration" warning if using
+                -- global types or specific library patterns
+                -- hygiene = { enabled = true },
+              },
+            },
+          },
+        },
+
+        -- 2. Keep your existing servers so they don't get overwritten
         angularls = { enabled = false },
         gopls = {
           settings = {
             gopls = {
-              -- This helps gopls understand how to handle whitespace during refactoring
-              ["formatting.gofumpt"] = false, -- gofumpt often forces tabs even harder
+              ["formatting.gofumpt"] = false,
             },
           },
-          -- This forces the buffer to use spaces whenever a Go file is opened via LSP
           on_attach = function(client, bufnr)
             vim.bo[bufnr].expandtab = true
             vim.bo[bufnr].shiftwidth = 2
@@ -20,11 +41,7 @@ return {
             vim.bo[bufnr].tabstop = 2
           end,
         },
-
-        -- 1. Enable Templ LSP
         templ = {},
-
-        -- 2. Configure Emmet to work with Templ and Django
         emmet_language_server = {
           filetypes = {
             "html",
@@ -37,11 +54,13 @@ return {
             "templ",
             "htmldjango",
             "go",
+            "svelte", -- Ensure svelte is included for emmet
           },
           init_options = {
             includeLanguages = {
               templ = "html",
               htmldjango = "html",
+              svelte = "html",
             },
             showExpandedAbbreviation = "always",
             showAbbreviationSuggestions = true,
