@@ -16,9 +16,10 @@ return {
             "scss",
             "pug",
             "typescriptreact",
+            "svelte",
             "vue",
-            "templ", 
-            "htmldjango"
+            "templ",
+            "htmldjango",
           },
           init_options = {
             includeLanguages = {
@@ -51,6 +52,7 @@ return {
             "pug",
             "typescriptreact",
             "vue",
+            "svelte",
             "templ",
             "htmldjango",
           },
