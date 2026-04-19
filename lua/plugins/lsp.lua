@@ -6,28 +6,23 @@ return {
         -- 1. Svelte Configuration
         svelte = {
           keys = {
-            { "<leader>co", "<cmd>SvelteOutline<cr>", desc = "Svelte Outline" },
+            { "<leader>co", function() Snacks.picker.lsp_symbols() end, desc = "Svelte Outline" },
           },
           settings = {
             svelte = {
               plugin = {
-                -- Enables completions for HTML, CSS, and JS/TS within .svelte files
                 html = { completions = { enable = true } },
                 css = { completions = { enable = true } },
                 typescript = {
                   completions = { enable = true },
                   diagnostics = { enable = true },
                 },
-                -- Optional: Disable the "missing-declaration" warning if using
-                -- global types or specific library patterns
-                -- hygiene = { enabled = true },
               },
             },
           },
         },
 
-        -- 2. Keep your existing servers so they don't get overwritten
-        angularls = { enabled = false },
+        -- 2. Go (gopls)
         gopls = {
           settings = {
             gopls = {
@@ -41,20 +36,27 @@ return {
             vim.bo[bufnr].tabstop = 2
           end,
         },
+
+        -- 3. Templ
         templ = {},
+
+        -- 4. Emmet
         emmet_language_server = {
           filetypes = {
-            "html",
-            "typescriptreact",
-            "javascriptreact",
             "css",
+            "eruby",
+            "html",
+            "javascript",
+            "javascriptreact",
+            "less",
             "sass",
             "scss",
-            "less",
+            "pug",
+            "typescriptreact",
+            "svelte",
+            "vue",
             "templ",
             "htmldjango",
-            "go",
-            "svelte", -- Ensure svelte is included for emmet
           },
           init_options = {
             includeLanguages = {
@@ -64,8 +66,60 @@ return {
             },
             showExpandedAbbreviation = "always",
             showAbbreviationSuggestions = true,
+            showSuggestionsAsSnippets = true,
+            html = {
+              snippets = {
+                form = "form",
+              },
+            },
           },
         },
+
+        -- 5. ESLint (Optimized with silenced stylistic rules)
+        eslint = {
+          filetypes = {
+            "javascript",
+            "javascriptreact",
+            "javascript.jsx",
+            "typescript",
+            "typescriptreact",
+            "typescript.tsx",
+            "vue",
+            "html",
+            "markdown",
+            "json",
+            "jsonc",
+            "yaml",
+            "toml",
+            "xml",
+            "gql",
+            "graphql",
+            "astro",
+            "svelte",
+            "css",
+            "less",
+            "scss",
+            "pcss",
+            "postcss",
+          },
+          settings = {
+            rulesCustomizations = {
+              { rule = "style/*", severity = "off", fixable = true },
+              { rule = "format/*", severity = "off", fixable = true },
+              { rule = "*-indent", severity = "off", fixable = true },
+              { rule = "*-spacing", severity = "off", fixable = true },
+              { rule = "*-spaces", severity = "off", fixable = true },
+              { rule = "*-order", severity = "off", fixable = true },
+              { rule = "*-dangle", severity = "off", fixable = true },
+              { rule = "*-newline", severity = "off", fixable = true },
+              { rule = "*quotes", severity = "off", fixable = true },
+              { rule = "*semi", severity = "off", fixable = true },
+            },
+          },
+        },
+
+        -- Disable unwanted servers
+        angularls = { enabled = false },
       },
     },
   },

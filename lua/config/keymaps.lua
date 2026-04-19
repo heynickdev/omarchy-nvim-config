@@ -313,3 +313,30 @@ vim.keymap.set("n", "<leader>wv", "<C-w>v<leader>pe", {
     remap = true, 
     desc = "Split window vertically and open Project Explorer" 
 })
+
+-- --- THE "SMART ENTER" FIX ---
+-- This specifically fixes the <div>|</div> expansion issue
+vim.keymap.set(
+  "i",
+  "<CR>",
+  function()
+    local line = vim.api.nvim_get_current_line()
+    local col = vim.api.nvim_win_get_cursor(0)[2]
+
+    -- Check if cursor is between '>' and '<'
+    local char_before = line:sub(col, col)
+    local char_after = line:sub(col + 1, col + 1)
+
+    if char_before == ">" and char_after == "<" then
+      return "<CR><Esc>O"
+    end
+
+    return "<CR>"
+  end,
+  { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" }
+)
+
+
+
+vim.keymap.set('i', 'jj', '<Esc>', { noremap = false })
+vim.keymap.set('i', 'jk', '<Esc>', { noremap = false })

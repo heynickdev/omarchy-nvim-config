@@ -30,6 +30,13 @@ vim.opt.hlsearch = false -- Turns off the persistent background highlighting of 
 vim.opt.incsearch = true -- Highlights the first matching search result incrementally as you are still typing the pattern.
 vim.opt.isfname:append("@-@") -- Appends the '@' symbol to valid filename characters, making it easier to open paths like npm scoped packages (e.g., @scope/pkg).
 
+-- --- TEMPL & HTML FILETYPE ---
+vim.filetype.add({
+  extension = {
+    templ = "templ",
+  },
+})
+
 -- --- NETRW & CLIPBOARD ---
 vim.g.netrw_banner = 0 -- Hides the large, multiline help banner at the top of Vim's default Netrw file explorer.
 vim.g.netrw_bufsettings = "noma nomod nu rnu nobl nowrap ro" -- Applies strict buffer settings to Netrw windows: unmodifiable, numbers on, no buffer listing, no wrap, read-only.
@@ -38,49 +45,5 @@ vim.opt.clipboard = "unnamedplus" -- Relies purely on Neovim's native Wayland de
 -- --- KEYBOARD GLOBALS ---
 -- vim.g.maplocalleader = ";" -- Sets the local leader key, typically used for filetype-specific plugin bindings, to the semicolon.
 vim.g.autoformat = false -- A global flag read by plugins (like conform.nvim) to disable automatic code formatting on save by default.
-
--- --- TEMPL & HTML FILETYPE FIXES ---
-vim.filetype.add({ -- Invokes the Neovim filetype API to define custom file extension mappings.
-  extension = { -- Specifies that we are mapping based on the file's extension.
-    templ = "templ", -- Tells Neovim to treat files ending in .templ as the "templ" filetype.
-  }, -- Closes the extension table.
-}) -- Closes the filetype.add function call.
-
--- Combine your templ logic into one clean autocmd
-vim.api.nvim_create_autocmd("FileType", { -- Registers an autocommand that fires whenever a buffer's filetype is set.
-  pattern = { "templ", "html" }, -- Ensures this logic only triggers for templ and html files.
-  callback = function() -- Defines the anonymous Lua function to run when the autocommand triggers.
-    vim.bo.indentexpr = "nvim_treesitter#indent()" -- Sets the buffer-local option to use Treesitter's syntax tree for calculating accurate indentation.
-    vim.opt_local.shiftwidth = 2 -- Forces the buffer-local shift width to 2 spaces.
-    vim.opt_local.tabstop = 2 -- Forces the buffer-local tab stop to 2 spaces.
-    vim.opt_local.softtabstop = 2 -- Forces the buffer-local soft tab stop to 2 spaces.
-    vim.opt_local.expandtab = true -- Forces tabs to be expanded to spaces for these specific buffers.
-    vim.opt_local.smartindent = true -- Ensures smart indentation is active locally.
-  end, -- Ends the callback function body.
-}) -- Closes the nvim_create_autocmd table and function call.
-
--- --- THE "SMART ENTER" FIX ---
--- This specifically fixes the <div>|</div> expansion issue
-vim.keymap.set(
-  "i",
-  "<CR>",
-  function() -- Creates a keymap for the Enter key (<CR>) in Insert mode ("i") that executes the following Lua function.
-    local line = vim.api.nvim_get_current_line() -- Fetches the complete string of text on the line where the cursor currently resides.
-    local col = vim.api.nvim_win_get_cursor(0)[2] -- Retrieves the current 0-indexed column position of the cursor in the active window.
-
-    -- Check if cursor is between '>' and '<'
-    local char_before = line:sub(col, col) -- Extracts the single character situated immediately before the cursor.
-    local char_after = line:sub(col + 1, col + 1) -- Extracts the single character situated immediately after the cursor.
-
-    if char_before == ">" and char_after == "<" then -- Evaluates if the cursor is perfectly sandwiched between a closing angle bracket and an opening one.
-      -- Returns Enter, then Escapes to Normal mode, then 'O' to
-      -- create a new indented line in between.
-      return "<CR><Esc>O" -- Simulates a carriage return, drops to normal mode via Escape, and uses 'O' to open an indented line above.
-    end -- Ends the conditional block.
-
-    return "<CR>" -- If not between HTML-like tags, falls back to returning the standard Enter key behavior.
-  end,
-  { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" }
-) -- Configuration table: 'expr=true' executes the returned string, 'replace_keycodes' translates <CR>/<Esc> to actual keystrokes, and 'desc' labels the keymap.
 
 vim.opt.mouse = ""
