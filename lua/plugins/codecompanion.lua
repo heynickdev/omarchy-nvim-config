@@ -9,14 +9,17 @@ return {
   config = function()
     require("codecompanion").setup({
       adapters = {
-        lm_studio = function()
-          return require("codecompanion.adapters").extend("openai_compatible", {
-            env = {
-              url = "http://100.123.68.115:1234",
-              api_key = "lm-studio",
-            },
-          })
-        end,
+        http = { -- <== THIS IS THE MISSING WRAPPER
+          lm_studio = function()
+            return require("codecompanion.adapters").extend("openai_compatible", {
+              name = "lm_studio",
+              env = {
+                url = "http://100.123.68.115:1234",
+                api_key = "lm-studio",
+              },
+            })
+          end,
+        },
       },
       strategies = {
         chat = { adapter = "lm_studio" },
@@ -34,7 +37,7 @@ return {
     })
 
     vim.keymap.set({ "n", "v" }, "<C-a>", "<cmd>CodeCompanionActions<cr>", { noremap = true, silent = true, desc = "AI Actions" })
-    vim.keymap.set({ "n", "v" }, "<LocalLeader>a", "<cmd>CodeCompanionChat Toggle<cr>", { noremap = true, silent = true, desc = "Toggle AI Chat" })
+    vim.keymap.set({ "n", "v" }, "<leader>to", "<cmd>CodeCompanionChat Toggle<cr>", { noremap = true, silent = true, desc = "Toggle AI Chat" })
     vim.keymap.set("v", "ga", "<cmd>CodeCompanionChat Add<cr>", { noremap = true, silent = true, desc = "Add to AI Chat" })
   end,
 }
