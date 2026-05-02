@@ -45,5 +45,3 @@ vim.opt.clipboard = "unnamedplus" -- Relies purely on Neovim's native Wayland de
 -- --- KEYBOARD GLOBALS ---
 -- vim.g.maplocalleader = ";" -- Sets the local leader key, typically used for filetype-specific plugin bindings, to the semicolon.
 vim.g.autoformat = false -- A global flag read by plugins (like conform.nvim) to disable automatic code formatting on save by default.
-
-vim.opt.mouse = ""
