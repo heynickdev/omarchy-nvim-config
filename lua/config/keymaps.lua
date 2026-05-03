@@ -268,12 +268,14 @@ vim.keymap.set("n", "<leader>ap", function() -- paste all
   vim.api.nvim_feedkeys('ggVG"+p', "t", true)
 end, { desc = "Replace All with Clipboard", noremap = true, silent = true })
 
--- Changed from pv to pe to prevent overlap with yank history (<leader>p)
-map("n", "<leader>pe", vim.cmd.Ex, { desc = "Project Explorer (Netrw)" }) 
+-- Allow LazyVim to use <leader>e for Neo-tree by default.
+-- Set Netrw to a backup keymap (<leader>cE for Classic Explorer) to prevent conflicts.
+map("n", "<leader>cE", vim.cmd.Ex, { desc = "Project Explorer Backup (Netrw)" }) 
 
 -- Yanking (copying) TO the system clipboard
-vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+y in normal mode to initiate a copy operation routed to the OS clipboard.
-vim.keymap.set("v", "<leader>y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+y in visual mode to copy the active selection directly to the OS clipboard.
+-- Changed <leader>y to <leader>Y to prevent timeout conflicts with <leader>yy
+vim.keymap.set("n", "<leader>Y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+Shift+Y in normal mode to initiate a copy operation routed to the OS clipboard.
+vim.keymap.set("v", "<leader>Y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+Shift+Y in visual mode to copy the active selection directly to the OS clipboard.
 vim.keymap.set("n", "<leader>yy", '"+Y', { desc = "Yank Line to System Clipboard", noremap = true, silent = true }) -- Binds Space+yy to copy the entire current line to the OS clipboard.
 
 -- Function to toggle LSP clients for the current buffer
@@ -307,11 +309,9 @@ end, { desc = "Toggle Inlay Hints" }) -- Closes the function and sets the descri
 pcall(vim.keymap.del, "n", "<leader>wv")
 
 -- Create the new mapping
--- 'remap = true' is required so that Neovim recognizes <leader>pe as a 
--- secondary mapping instead of literal keystrokes.
-vim.keymap.set("n", "<leader>wv", "<C-w>v<leader>pe", { 
-    remap = true, 
-    desc = "Split window vertically and open Project Explorer" 
+-- Uses standard commands to split vertically and open the Netrw backup.
+vim.keymap.set("n", "<leader>wv", "<cmd>vsplit<cr><cmd>Ex<cr>", { 
+    desc = "Split window vertically and open Netrw" 
 })
 
 -- --- THE "SMART ENTER" FIX ---
@@ -335,8 +335,6 @@ vim.keymap.set(
   end,
   { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" }
 )
-
-
 
 vim.keymap.set('i', 'jj', '<Esc>', { noremap = false })
 vim.keymap.set('i', 'jk', '<Esc>', { noremap = false })
