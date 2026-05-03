@@ -13,6 +13,14 @@ return {
       enable_git_status = true,
       enable_diagnostics = true,
 
+      filesystem = {
+        filtered_items = {
+          visible = true, -- Shows hidden files by default
+          hide_dotfiles = true, -- Keeps dotfiles in the "filtered" group so 'H' can toggle them
+          hide_gitignored = true, -- Keeps gitignored files in the "filtered" group
+        },
+      },
+
       -- This block enables the line numbers
       event_handlers = {
         {
