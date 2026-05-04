@@ -5,24 +5,6 @@ return {
   -- 2. Disable Dashboard (optional, user preference)
   { "nvimdev/dashboard-nvim", enabled = false },
 
-  -- 3. Neo-tree: Add line numbers and relative numbers to the tree window
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    opts = {
-      window = {
-        event_handlers = {
-          {
-            event = "neo_tree_buffer_enter",
-            handler = function()
-              vim.opt_local.number = true
-              vim.opt_local.relativenumber = true
-            end,
-          },
-        },
-      },
-    },
-  },
-
   -- 4. Undotree: Visual undo history
   {
     "mbbill/undotree",
@@ -36,7 +18,13 @@ return {
     "norcalli/nvim-colorizer.lua",
     event = "VeryLazy",
     opts = {
-      filetypes = { "*" },
+      filetypes = {
+        "*",
+        "!neo-tree",
+        "!lazy",
+        "!mason",
+        "!TelescopePrompt",
+      },
     },
     config = function(_, opts)
       require("colorizer").setup(opts.filetypes, opts)
