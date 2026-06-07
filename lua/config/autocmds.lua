@@ -37,3 +37,32 @@ vim.api.nvim_create_autocmd("FileType", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  callback = function()
+    pcall(vim.keymap.del, "n", "<leader>e")
+    pcall(vim.keymap.del, "n", "<leader>E")
+
+    vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle reveal<CR>", {
+      desc = "Toggle Neo-tree",
+      noremap = true,
+      silent = true,
+    })
+
+    vim.keymap.set("n", "<leader>E", function()
+      local current_file = vim.api.nvim_buf_get_name(0)
+
+      if current_file ~= "" then
+        local dir = vim.fn.fnamemodify(current_file, ":p:h")
+        vim.cmd("Explore " .. vim.fn.fnameescape(dir))
+      else
+        vim.cmd("Explore")
+      end
+    end, {
+      desc = "Open netrw",
+      noremap = true,
+      silent = true,
+    })
+  end,
+})

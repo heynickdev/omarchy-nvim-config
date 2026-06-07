@@ -6,7 +6,7 @@
 
 -- DO NOT USE `LazyVim.safe_keymap_set` IN YOUR OWN CONFIG!! -- (Warning from LazyVim maintainers regarding core overrides).
 -- use `vim.keymap.set` instead -- (Standard advice for user-defined mappings to avoid conflicts).
-local map = LazyVim.safe_keymap_set -- Creates a localized, shorter alias for the LazyVim-specific keymap function for cleaner syntax.
+local map = vim.keymap.set -- Creates a localized, shorter alias for the LazyVim-specific keymap function for cleaner syntax.
 
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true }) -- Maps 'j' in normal/visual modes to move down by visual lines (gj) if no count is provided, handling wrapped lines gracefully.
@@ -268,9 +268,29 @@ vim.keymap.set("n", "<leader>ap", function() -- paste all
   vim.api.nvim_feedkeys('ggVG"+p', "t", true)
 end, { desc = "Replace All with Clipboard", noremap = true, silent = true })
 
--- Allow LazyVim to use <leader>e for Neo-tree by default.
--- Set Netrw to a backup keymap (<leader>cE for Classic Explorer) to prevent conflicts.
-map("n", "<leader>cE", vim.cmd.Ex, { desc = "Project Explorer Backup (Netrw)" }) 
+pcall(vim.keymap.del, "n", "<leader>e")
+pcall(vim.keymap.del, "n", "<leader>E")
+
+vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle reveal<CR>", {
+  desc = "Toggle Neo-tree",
+  noremap = true,
+  silent = true,
+})
+
+vim.keymap.set("n", "<leader>E", function()
+  local current_file = vim.api.nvim_buf_get_name(0)
+
+  if current_file ~= "" then
+    local dir = vim.fn.fnamemodify(current_file, ":p:h")
+    vim.cmd("Explore " .. vim.fn.fnameescape(dir))
+  else
+    vim.cmd("Explore")
+  end
+end, {
+  desc = "Open netrw",
+  noremap = true,
+  silent = true,
+})
 
 -- Yanking (copying) TO the system clipboard
 -- Changed <leader>y to <leader>Y to prevent timeout conflicts with <leader>yy
