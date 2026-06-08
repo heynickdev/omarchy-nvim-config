@@ -32,12 +32,6 @@ return {
       markdown = { "prettierd" },
     },
 
-    -- 2. THE FORMAT ON SAVE TRIGGER
-    -- format_on_save = {
-    --   -- These options will be passed to conform.format()
-    --   timeout_ms = 500,
-    --   lsp_format = "fallback", -- Use LSP if specialized formatter isn't found
-    -- },
 
     -- 3. Custom Formatter Rules (Indentation & Capitalization)
     formatters = {

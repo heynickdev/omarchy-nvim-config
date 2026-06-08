@@ -66,3 +66,36 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
+
+-- --- ORGANIZE IMPORTS ON SAVE (Go, Svelte, TS, JS, Vue) ---
+local function organize_imports()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients == 0 then
+    return
+  end
+
+  local enc = clients[1].offset_encoding or "utf-16"
+  local params = vim.lsp.util.make_range_params(0, enc)
+
+  -- Use tbl_extend to avoid lua_ls strict typing warnings
+  local action_params = vim.tbl_extend("force", params, {
+    context = { only = { "source.organizeImports" } },
+  })
+
+  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", action_params, 1000)
+
+  for cid, res in pairs(result or {}) do
+    for _, r in pairs(res.result or {}) do
+      if r.edit then
+        local client = vim.lsp.get_client_by_id(cid)
+        local client_enc = (client and client.offset_encoding) or "utf-16"
+        vim.lsp.util.apply_workspace_edit(r.edit, client_enc)
+      end
+    end
+  end
+end
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = { "*.go", "*.svelte", "*.ts", "*.js", "*.vue" },
+  callback = organize_imports,
+})
