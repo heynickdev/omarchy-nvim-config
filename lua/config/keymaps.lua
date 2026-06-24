@@ -312,7 +312,7 @@ local function toggle_lsp() -- Defines a custom function to handle restarting me
     vim.cmd("doautocmd <nomodeline> FileType") -- Tricks Neovim into re-evaluating the buffer's filetype, which forces lspconfig to boot up the relevant server (e.g., OmniSharp or jdtls).
   end -- Ends the conditional logic.
 end -- Ends the toggle_lsp function.
-vim.keymap.set("n", "<leader>tt", toggle_lsp, { desc = "Toggle LSP (Start/Stop)" }) -- Binds Space+tt to execute the custom toggle_lsp logic.
+vim.keymap.set("n", "<leader>tlsp", toggle_lsp, { desc = "Toggle LSP (Start/Stop)" }) -- Binds Space+tt to execute the custom toggle_lsp logic.
 
 -- FULL EDITED CODE SNIPPET (Lua)
 -- Add this to your configuration structure (e.g., in a spec that runs after 'nvim-lspconfig') -- (User-provided context).
@@ -324,37 +324,31 @@ vim.keymap.set("n", "<leader>ti", function() -- Binds Space+ti to toggle native 
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) -- Queries the current state of inlay hints and flips the boolean to enable or disable them dynamically.
 end, { desc = "Toggle Inlay Hints" }) -- Closes the function and sets the description.
 
-
 -- Delete the default mapping first to ensure no conflicts
 pcall(vim.keymap.del, "n", "<leader>wv")
 
 -- Create the new mapping
 -- Uses standard commands to split vertically and open the Netrw backup.
-vim.keymap.set("n", "<leader>wv", "<cmd>vsplit<cr><cmd>Ex<cr>", { 
-    desc = "Split window vertically and open Netrw" 
+vim.keymap.set("n", "<leader>wv", "<cmd>vsplit<cr><cmd>Ex<cr>", {
+  desc = "Split window vertically and open Netrw",
 })
 
 -- --- THE "SMART ENTER" FIX ---
 -- This specifically fixes the <div>|</div> expansion issue
-vim.keymap.set(
-  "i",
-  "<CR>",
-  function()
-    local line = vim.api.nvim_get_current_line()
-    local col = vim.api.nvim_win_get_cursor(0)[2]
+vim.keymap.set("i", "<CR>", function()
+  local line = vim.api.nvim_get_current_line()
+  local col = vim.api.nvim_win_get_cursor(0)[2]
 
-    -- Check if cursor is between '>' and '<'
-    local char_before = line:sub(col, col)
-    local char_after = line:sub(col + 1, col + 1)
+  -- Check if cursor is between '>' and '<'
+  local char_before = line:sub(col, col)
+  local char_after = line:sub(col + 1, col + 1)
 
-    if char_before == ">" and char_after == "<" then
-      return "<CR><Esc>O"
-    end
+  if char_before == ">" and char_after == "<" then
+    return "<CR><Esc>O"
+  end
 
-    return "<CR>"
-  end,
-  { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" }
-)
+  return "<CR>"
+end, { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" })
 
-vim.keymap.set('i', 'jj', '<Esc>', { noremap = false })
-vim.keymap.set('i', 'jk', '<Esc>', { noremap = false })
+vim.keymap.set("i", "jj", "<Esc>", { noremap = false })
+vim.keymap.set("i", "jk", "<Esc>", { noremap = false })

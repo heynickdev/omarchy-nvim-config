@@ -99,3 +99,42 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.go", "*.svelte", "*.ts", "*.js", "*.vue" },
   callback = organize_imports,
 })
+
+-- Autocmds are automatically loaded on the VeryLazy event.
+
+local terminal_group = vim.api.nvim_create_augroup("UserTerminalBottom", {
+  clear = true,
+})
+
+vim.api.nvim_create_autocmd("TermOpen", {
+  group = terminal_group,
+  callback = function(event)
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(event.buf) then
+        return
+      end
+
+      local win = vim.fn.bufwinid(event.buf)
+
+      if win == -1 then
+        return
+      end
+
+      local config = vim.api.nvim_win_get_config(win)
+
+      if config.relative ~= "" then
+        return
+      end
+
+      vim.api.nvim_set_current_win(win)
+      vim.cmd("wincmd J")
+      vim.cmd("resize 15")
+
+      vim.wo.number = false
+      vim.wo.relativenumber = false
+      vim.wo.signcolumn = "no"
+
+      vim.cmd("startinsert")
+    end)
+  end,
+})
