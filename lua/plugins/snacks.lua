@@ -19,7 +19,15 @@ return {
   },
 
   opts = function()
-    local platform = require("config.platform")
+    local ok, platform = pcall(require, "config.platform")
+
+    if not ok then
+      platform = {
+        keep_open = function(cmd)
+          return cmd
+        end,
+      }
+    end
 
     local sections = {
       { section = "header" },

@@ -9,11 +9,11 @@ local function is_flutter_log_buf(buf)
 
   local name = vim.api.nvim_buf_get_name(buf)
   local basename = vim.fn.fnamemodify(name, ":t")
-  local filetype = vim.bo[buf].filetype
+  local filetype = (vim.bo[buf].filetype or ""):lower()
 
   return basename == "__FLUTTER_DEV_LOG__"
     or name:find("__FLUTTER_DEV_LOG__", 1, true) ~= nil
-    or filetype:lower():find("flutter") ~= nil and filetype:lower():find("log") ~= nil
+    or (filetype:find("flutter") ~= nil and filetype:find("log") ~= nil)
 end
 
 local function find_flutter_log_buf()
@@ -52,12 +52,10 @@ local function open_flutter_log_buf(buf)
 end
 
 local function toggle_flutter_logs()
-  -- If any Flutter log window is visible, hide all of them.
   if close_flutter_log_windows() then
     return
   end
 
-  -- If the log buffer already exists but is hidden, show that exact buffer.
   local buf = find_flutter_log_buf()
 
   if buf then
@@ -65,7 +63,6 @@ local function toggle_flutter_logs()
     return
   end
 
-  -- If Flutter has not created the log buffer yet, ask flutter-tools to open it.
   vim.cmd("FlutterLogToggle")
 end
 
@@ -117,7 +114,15 @@ return {
 
         debugger = {
           enabled = true,
-          run_via_dap = true,
+
+          -- Important:
+          -- false means <leader>Fr / FlutterRun will NOT open DAP panes.
+          -- Use <leader>Fd / FlutterDebug when you actually want debugging.
+          run_via_dap = false,
+
+          -- Stops Dart from breaking inside SDK internals like errors_patch.dart.
+          exception_breakpoints = {},
+          evaluate_to_string_in_debug_views = false,
         },
 
         dev_log = {

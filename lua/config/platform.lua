@@ -26,7 +26,7 @@ function M.pub_cache()
 end
 
 function M.sleep_cmd(seconds)
-  seconds = seconds or 1000
+  seconds = seconds or 1
 
   if M.is_windows then
     local shell = (vim.o.shell or ""):lower()
@@ -42,7 +42,7 @@ function M.sleep_cmd(seconds)
 end
 
 function M.keep_open(cmd, seconds)
-  seconds = seconds or 1000
+  seconds = seconds or 1
 
   if M.is_windows then
     local shell = (vim.o.shell or ""):lower()
@@ -54,7 +54,7 @@ function M.keep_open(cmd, seconds)
     return cmd .. " & " .. M.sleep_cmd(seconds)
   end
 
-  return cmd .. " && " .. M.sleep_cmd(seconds)
+  return cmd .. "; " .. M.sleep_cmd(seconds)
 end
 
 return M
