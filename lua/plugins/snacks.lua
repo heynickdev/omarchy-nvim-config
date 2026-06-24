@@ -13,7 +13,8 @@ return {
           },
         })
       end,
-      desc = "Terminal Bottom",
+      desc = "Toggle Bottom Terminal",
+      mode = { "n", "t" },
     },
   },
 
