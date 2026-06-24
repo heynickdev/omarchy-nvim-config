@@ -41,7 +41,11 @@ vim.filetype.add({
   },
 })
 
+-- Netrw
+-- Netrw
 vim.g.netrw_banner = 0
+vim.g.netrw_hide = 1
+vim.g.netrw_list_hide = [[^\.$,^\.\.$,^\./$,^\.\./$]]
 vim.g.netrw_bufsettings = "noma nomod nu rnu nobl nowrap ro"
 
 vim.opt.clipboard = "unnamedplus"
