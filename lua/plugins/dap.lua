@@ -1,6 +1,16 @@
 return {
   {
     "mfussenegger/nvim-dap",
+    dependencies = {
+      -- Installs the VSCode JS debugger adapter inside Neovim
+      {
+        "mxsdev/nvim-dap-vscode-js",
+        opts = {
+          debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
+          adapters = { "pwa-node", "pwa-chrome" },
+        },
+      },
+    },
 
     keys = {
       {
@@ -40,6 +50,26 @@ return {
 
       -- Do not stop inside Dart/Flutter SDK exception internals by default.
       dap.defaults.fallback.exception_breakpoints = {}
+
+      -- Configure configurations for React Native / Expo Debugging
+      local expo_config = {
+        {
+          type = "pwa-node",
+          request = "attach",
+          name = "Attach to Metro (Expo / React Native)",
+          port = 8081,
+          sourceMaps = true,
+          trace = true,
+          cwd = vim.fn.getcwd(),
+          resolveSourceMapLocations = {
+            "${workspaceFolder}/**",
+            "!**/node_modules/**",
+          },
+        },
+      }
+
+      dap.configurations.javascriptreact = expo_config
+      dap.configurations.typescriptreact = expo_config
     end,
   },
 
@@ -73,6 +103,7 @@ return {
           },
           size = 40,
           position = "left",
+          orientation = "vertical",
         },
         {
           elements = {
@@ -81,6 +112,7 @@ return {
           },
           size = 10,
           position = "bottom",
+          orientation = "horizontal",
         },
       },
     },

@@ -352,3 +352,14 @@ end, { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" })
 
 vim.keymap.set("i", "jj", "<Esc>", { noremap = false })
 vim.keymap.set("i", "jk", "<Esc>", { noremap = false })
+
+-- replace
+vim.keymap.set("n", "<leader>r", [[:%s/\<<C-r><C-w>\>//gcI<Left><Left><Left><Left>]], {
+  desc = "Replace word under cursor with confirm",
+})
+
+-- Start Metro Bundler
+vim.keymap.set("n", "<leader>rs", "<cmd>OverseerRunCmd npx expo start<cr>", { desc = "Start Metro/Expo" })
+
+-- Run on Android Emulator
+vim.keymap.set("n", "<leader>ra", "<cmd>OverseerRunCmd npx expo run:android<cr>", { desc = "Run Android" })
