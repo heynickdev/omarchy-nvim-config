@@ -34,14 +34,35 @@ return {
     }
 
     if vim.fn.executable("pokemon-colorscripts") == 1 then
-      table.insert(sections, {
-        pane = 2,
-        section = "terminal",
-        cmd = platform.keep_open("pokemon-colorscripts -r --no-title", 1000),
-        height = 15,
-        padding = 1,
-        indent = 8,
-      })
+      -- 1. Generate the random sprite silently
+      local output = vim.fn.system("pokemon-colorscripts -r --no-title")
+      local lines = vim.split(output, "\n")
+      local height = #lines
+
+      -- 2. Trim trailing empty lines for a snug fit
+      while height > 0 and lines[height] == "" do
+        height = height - 1
+      end
+      
+      height = math.max(height, 1)
+
+      -- 3. Write it to a temporary file
+      local tmpfile = vim.fn.tempname()
+      local f = io.open(tmpfile, "w")
+      if f then
+        f:write(output)
+        f:close()
+
+        -- 4. Render it with the perfectly calculated height
+        table.insert(sections, {
+          pane = 2,
+          section = "terminal",
+          cmd = platform.keep_open("cat " .. tmpfile, 1000),
+          height = height,
+          padding = 1,
+          indent = 8,
+        })
+      end
     end
 
     table.insert(sections, { section = "keys", gap = 1, padding = 1 })
