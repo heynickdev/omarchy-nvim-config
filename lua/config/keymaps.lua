@@ -242,12 +242,56 @@ map("n", "<leader>ft", function()
 end, { desc = "Terminal (Root Dir)" }) -- Binds Space+ft to open a floating terminal anchored to the project root.
 -- Switch from terminal to normal mode with Esc
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Enter normal mode" }) -- Maps Escape inside the built-in terminal to trigger the complex keycode required to exit terminal-insert mode.
-map({ "n", "t" }, "<c-/>", function()
-  Snacks.terminal(nil, { cwd = LazyVim.root() })
-end, { desc = "Terminal (Root Dir)" }) -- Binds Ctrl+/ to quickly toggle the floating root terminal from normal or terminal mode.
-map({ "n", "t" }, "<c-_>", function()
-  Snacks.terminal(nil, { cwd = LazyVim.root() })
+local ctrl_slash_terminal_cwd
+local function focus_ctrl_slash_terminal()
+  vim.schedule(function()
+    if vim.bo.buftype == "terminal" then
+      local last_line = vim.api.nvim_buf_line_count(0)
+      vim.api.nvim_win_set_cursor(0, { last_line, 0 })
+      vim.cmd("startinsert")
+    end
+  end)
+end
+
+local function toggle_ctrl_slash_terminal()
+  if ctrl_slash_terminal_cwd then
+    local terminal = Snacks.terminal.get(nil, {
+      cwd = ctrl_slash_terminal_cwd,
+      count = 1,
+      create = false,
+    })
+
+    if terminal and terminal:buf_valid() then
+      Snacks.terminal.focus(nil, {
+        cwd = ctrl_slash_terminal_cwd,
+        count = 1,
+      })
+      focus_ctrl_slash_terminal()
+      return
+    end
+  end
+
+  ctrl_slash_terminal_cwd = vim.fn.getcwd(0)
+  Snacks.terminal.focus(nil, {
+    cwd = ctrl_slash_terminal_cwd,
+    count = 1,
+  })
+  focus_ctrl_slash_terminal()
+end
+map("n", "<c-/>", function()
+  toggle_ctrl_slash_terminal()
+end, { desc = "Terminal (cwd)" }) -- Binds Ctrl+/ to toggle a single terminal opened from the current directory.
+map("n", "<c-_>", function()
+  toggle_ctrl_slash_terminal()
 end, { desc = "which_key_ignore" }) -- Secondary binding for Ctrl+/ (recognized as Ctrl+_ by some terminal emulators) to toggle the terminal.
+map("t", "<c-/>", function()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
+  vim.schedule(toggle_ctrl_slash_terminal)
+end, { desc = "Terminal (cwd)" }) -- Exits terminal input before toggling the Ctrl+/ terminal.
+map("t", "<c-_>", function()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
+  vim.schedule(toggle_ctrl_slash_terminal)
+end, { desc = "which_key_ignore" }) -- Secondary terminal-mode binding for Ctrl+/.
 
 -- windows
 map("n", "<leader>-", "<C-W>s<cmd>Ex<cr>", { desc = "Split Window Below", remap = true }) -- Binds Space+- to slice the current window horizontally, placing the new split below.
