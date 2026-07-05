@@ -43,7 +43,7 @@ return {
       while height > 0 and lines[height] == "" do
         height = height - 1
       end
-      
+
       height = math.max(height, 1)
 
       -- 3. Write it to a temporary file
