@@ -33,7 +33,6 @@ return {
           "tailwindcss", -- Tailwind CSS
           "pyright", -- Python
           "rust_analyzer", -- Rust
-          "jdtls", -- Java
         },
         automatic_installation = true,
       })
