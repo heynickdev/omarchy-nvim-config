@@ -138,3 +138,37 @@ vim.api.nvim_create_autocmd("TermOpen", {
     end)
   end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "man",
+  callback = function()
+    -- Link dull man page highlights to vibrant code highlights
+    vim.api.nvim_set_hl(0, 'manTitle', { link = 'Keyword', default = false })
+    vim.api.nvim_set_hl(0, 'manSectionHeading', { link = 'Function', default = false })
+    vim.api.nvim_set_hl(0, 'manOptionDesc', { link = 'String', default = false })
+    vim.api.nvim_set_hl(0, 'manReference', { link = 'Type', default = false })
+  end,
+})
+
+-- --- UI TRANSPARENCY FIX ---
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = function()
+    local transparent_groups = {
+      "NormalFloat",     -- Floating windows
+      "FloatBorder",     -- Borders of floating windows
+      "NeoTreeNormal",   -- Neo-tree background
+      "NeoTreeNormalNC", -- Neo-tree background (non-current)
+      "WinSeparator",    -- The vertical split line
+      "VertSplit",       -- Legacy vertical split line
+    }
+
+    for _, group in ipairs(transparent_groups) do
+      -- Force the background to be completely transparent
+      vim.api.nvim_set_hl(0, group, { bg = "NONE", ctermbg = "NONE" })
+    end
+    
+    -- Optional: Dim the bright vertical separator line so it's less harsh
+    vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#565f89", bg = "NONE" }) 
+  end,
+})

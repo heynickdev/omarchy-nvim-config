@@ -1,126 +1,73 @@
 return {
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        -- 1. Svelte Configuration
-        svelte = {
-          keys = {
-            { "<leader>co", function() Snacks.picker.lsp_symbols() end, desc = "Svelte Outline" },
-          },
-          settings = {
-            svelte = {
-              plugin = {
-                html = { completions = { enable = true } },
-                css = { completions = { enable = true } },
-                typescript = {
-                  completions = { enable = true },
-                  diagnostics = { enable = true },
-                },
-              },
-            },
-          },
-        },
-
-        -- 2. Go (gopls)
-        gopls = {
-          settings = {
-            gopls = {
-              ["formatting.gofumpt"] = false,
-            },
-          },
-          on_attach = function(client, bufnr)
-            vim.bo[bufnr].expandtab = true
-            vim.bo[bufnr].shiftwidth = 2
-            vim.bo[bufnr].softtabstop = 2
-            vim.bo[bufnr].tabstop = 2
-          end,
-        },
-
-        -- 3. Templ
-        templ = {},
-
-        -- 4. Emmet
-        emmet_language_server = {
-          filetypes = {
-            "css",
-            "eruby",
-            "html",
-            "javascript",
-            "javascriptreact",
-            "less",
-            "sass",
-            "scss",
-            "pug",
-            "typescriptreact",
-            "svelte",
-            "vue",
-            "templ",
-            "htmldjango",
-          },
-          init_options = {
-            includeLanguages = {
-              templ = "html",
-              htmldjango = "html",
-              svelte = "html",
-            },
-            showExpandedAbbreviation = "always",
-            showAbbreviationSuggestions = true,
-            showSuggestionsAsSnippets = true,
-            html = {
-              snippets = {
-                form = "form",
-              },
-            },
-          },
-        },
-
-        -- 5. ESLint (Optimized with silenced stylistic rules)
-        eslint = {
-          filetypes = {
-            "javascript",
-            "javascriptreact",
-            "javascript.jsx",
-            "typescript",
-            "typescriptreact",
-            "typescript.tsx",
-            "vue",
-            "html",
-            "markdown",
-            "json",
-            "jsonc",
-            "yaml",
-            "toml",
-            "xml",
-            "gql",
-            "graphql",
-            "astro",
-            "svelte",
-            "css",
-            "less",
-            "scss",
-            "pcss",
-            "postcss",
-          },
-          settings = {
-            rulesCustomizations = {
-              { rule = "style/*", severity = "off", fixable = true },
-              { rule = "format/*", severity = "off", fixable = true },
-              { rule = "*-indent", severity = "off", fixable = true },
-              { rule = "*-spacing", severity = "off", fixable = true },
-              { rule = "*-spaces", severity = "off", fixable = true },
-              { rule = "*-order", severity = "off", fixable = true },
-              { rule = "*-dangle", severity = "off", fixable = true },
-              { rule = "*-newline", severity = "off", fixable = true },
-              { rule = "*quotes", severity = "off", fixable = true },
-              { rule = "*semi", severity = "off", fixable = true },
-            },
-          },
-        },
-
-        -- Disable unwanted servers
-        angularls = { enabled = false },
+  "neovim/nvim-lspconfig",
+  opts = {
+    servers = {
+      -- Explicitly disabled
+      angularls = {
+        enabled = false,
       },
+
+      -- Enable templ support
+      templ = {},
+
+      -- Emmet with expanded abbreviation suggestions and language mapping
+      emmet_language_server = {
+        filetypes = {
+          "css",
+          "eruby",
+          "html",
+          "htmldjango",
+          "javascript",
+          "javascriptreact",
+          "less",
+          "pug",
+          "sass",
+          "scss",
+          "svelte",
+          "templ",
+          "typescriptreact",
+        },
+        init_options = {
+          includeLanguages = {
+            templ = "html",
+            htmldjango = "html",
+            svelte = "html",
+          },
+        },
+      },
+
+      -- gopls settings to ignore gofumpt formatting
+      gopls = {
+        settings = {
+          gopls = {
+            gofumpt = false,
+          },
+        },
+      },
+    },
+
+    setup = {
+      gopls = function(_, _)
+        -- Hook into the gopls attachment process
+        vim.api.nvim_create_autocmd("LspAttach", {
+          callback = function(args)
+            local client = vim.lsp.get_client_by_id(args.data.client_id)
+            if client and client.name == "gopls" then
+              -- Strip gopls of its formatting capabilities so conform.nvim has full control
+              client.server_capabilities.documentFormattingProvider = false
+              client.server_capabilities.documentRangeFormattingProvider = false
+
+              -- Strictly enforce 4 spaces for Go buffers
+              vim.bo[args.buf].expandtab = true
+              vim.bo[args.buf].shiftwidth = 4
+              vim.bo[args.buf].tabstop = 4
+              vim.bo[args.buf].softtabstop = 4
+            end
+          end,
+        })
+        -- Return false so the base framework still handles the core server initialization
+        return false
+      end,
     },
   },
 }

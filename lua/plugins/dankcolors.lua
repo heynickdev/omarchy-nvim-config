@@ -8,32 +8,32 @@ return {
         vim.opt.termguicolors = true
 
         require("base16-colorscheme").setup({
-          base00 = "#0f1511",
-          base01 = "#0f1511",
-          base02 = "#808a83",
-          base03 = "#808a83",
-          base04 = "#d2dfd7",
-          base05 = "#f8fffa",
-          base06 = "#f8fffa",
-          base07 = "#f8fffa",
-          base08 = "#ffba9f",
-          base09 = "#fff6a5",
-          base0A = "#abeac3",
-          base0B = "#a5ffa7",
-          base0C = "#daffe8",
-          base0D = "#abeac3",
-          base0E = "#c6ffdb",
-          base0F = "#c6ffdb",
+          base00 = "#0f1416",
+          base01 = "#0f1416",
+          base02 = "#8c9497",
+          base03 = "#8c9497",
+          base04 = "#e5f1f4",
+          base05 = "#f8fdff",
+          base06 = "#f8fdff",
+          base07 = "#f8fdff",
+          base08 = "#ff9fbf",
+          base09 = "#fff9a5",
+          base0A = "#a2e8ff",
+          base0B = "#a5ffaf",
+          base0C = "#cef3ff",
+          base0D = "#a2e8ff",
+          base0E = "#b3ecff",
+          base0F = "#b3ecff",
         })
 
-        local bg = "#0f1511"
-        local fg = "#f8fffa"
-        local muted = "#808a83"
-        local blue = "#abeac3"
-        local cyan = "#daffe8"
-        local green = "#a5ffa7"
-        local red = "#ffba9f"
-        local purple = "#c6ffdb"
+        local bg = "#0f1416"
+        local fg = "#f8fdff"
+        local muted = "#8c9497"
+        local blue = "#a2e8ff"
+        local cyan = "#cef3ff"
+        local green = "#a5ffaf"
+        local red = "#ff9fbf"
+        local purple = "#b3ecff"
 
         -- Transparent main editor so your DMS/wallpaper blur shows through
         local transparent_groups = {
@@ -73,7 +73,7 @@ return {
         vim.api.nvim_set_hl(0, "Type", { fg = cyan, bold = true })
         vim.api.nvim_set_hl(0, "String", { fg = green })
         vim.api.nvim_set_hl(0, "DiagnosticError", { fg = red })
-        vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#fff6a5" })
+        vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#fff9a5" })
         vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = blue })
         vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = cyan })
 
