@@ -6,4 +6,4 @@ debug
 foo.*
 *.log
 data
-lua/plugins/dankcolors.lua
+./lua/plugins/dankcolors.lua
