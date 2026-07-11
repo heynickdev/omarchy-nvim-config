@@ -1,110 +1,91 @@
 return {
-  {
-    "RRethy/base16-nvim",
-    lazy = false,
-    priority = 10000,
-    config = function()
-      local function apply_theme()
-        vim.opt.termguicolors = true
+	{
+		"RRethy/base16-nvim",
+		priority = 1000,
+		config = function()
+			require('base16-colorscheme').setup({
+				base00 = '#1a1110',
+				base01 = '#1a1110',
+				base02 = '#a59a99',
+				base03 = '#a59a99',
+				base04 = '#fff1ef',
+				base05 = '#fff9f8',
+				base06 = '#fff9f8',
+				base07 = '#fff9f8',
+				base08 = '#ffa09f',
+				base09 = '#ffa09f',
+				base0A = '#ffbfb5',
+				base0B = '#b8ffa5',
+				base0C = '#ffddd8',
+				base0D = '#ffbfb5',
+				base0E = '#ffcac2',
+				base0F = '#ffcac2',
+			})
 
-        require("base16-colorscheme").setup({
-          base00 = "#0f1416",
-          base01 = "#0f1416",
-          base02 = "#8c9497",
-          base03 = "#8c9497",
-          base04 = "#e5f1f4",
-          base05 = "#f8fdff",
-          base06 = "#f8fdff",
-          base07 = "#f8fdff",
-          base08 = "#ff9fbf",
-          base09 = "#fff9a5",
-          base0A = "#a2e8ff",
-          base0B = "#a5ffaf",
-          base0C = "#cef3ff",
-          base0D = "#a2e8ff",
-          base0E = "#b3ecff",
-          base0F = "#b3ecff",
-        })
+			vim.api.nvim_set_hl(0, 'Visual', {
+				bg = '#a59a99',
+				fg = '#fff9f8',
+				bold = true
+			})
+			vim.api.nvim_set_hl(0, 'Statusline', {
+				bg = '#ffbfb5',
+				fg = '#1a1110',
+			})
+			vim.api.nvim_set_hl(0, 'LineNr', { fg = '#a59a99' })
+			vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#ffddd8', bold = true })
 
-        local bg = "#0f1416"
-        local fg = "#f8fdff"
-        local muted = "#8c9497"
-        local blue = "#a2e8ff"
-        local cyan = "#cef3ff"
-        local green = "#a5ffaf"
-        local red = "#ff9fbf"
-        local purple = "#b3ecff"
+			vim.api.nvim_set_hl(0, 'Statement', {
+				fg = '#ffcac2',
+				bold = true
+			})
+			vim.api.nvim_set_hl(0, 'Keyword', { link = 'Statement' })
+			vim.api.nvim_set_hl(0, 'Repeat', { link = 'Statement' })
+			vim.api.nvim_set_hl(0, 'Conditional', { link = 'Statement' })
 
-        -- Transparent main editor so your DMS/wallpaper blur shows through
-        local transparent_groups = {
-          "Normal",
-          "NormalNC",
-          "SignColumn",
-          "EndOfBuffer",
-          "LineNr",
-          "FoldColumn",
-          "CursorLine",
-          "CursorLineNr",
-          "StatusLine",
-          "StatusLineNC",
-          "WinSeparator",
-        }
+			vim.api.nvim_set_hl(0, 'Function', {
+				fg = '#ffbfb5',
+				bold = true
+			})
+			vim.api.nvim_set_hl(0, 'Macro', {
+				fg = '#ffbfb5',
+				italic = true
+			})
+			vim.api.nvim_set_hl(0, '@function.macro', { link = 'Macro' })
 
-        for _, group in ipairs(transparent_groups) do
-          vim.api.nvim_set_hl(0, group, { bg = "NONE" })
-        end
+			vim.api.nvim_set_hl(0, 'Type', {
+				fg = '#ffddd8',
+				bold = true,
+				italic = true
+			})
+			vim.api.nvim_set_hl(0, 'Structure', { link = 'Type' })
 
-        -- Keep popups readable
-        vim.api.nvim_set_hl(0, "NormalFloat", { bg = bg, fg = fg })
-        vim.api.nvim_set_hl(0, "FloatBorder", { bg = bg, fg = blue })
-        vim.api.nvim_set_hl(0, "Pmenu", { bg = bg, fg = fg })
-        vim.api.nvim_set_hl(0, "PmenuSel", { bg = blue, fg = bg, bold = true })
+			vim.api.nvim_set_hl(0, 'String', {
+				fg = '#b8ffa5',
+				italic = true
+			})
 
-        -- Nice editor highlights
-        vim.api.nvim_set_hl(0, "Visual", { bg = muted, fg = fg, bold = true })
-        vim.api.nvim_set_hl(0, "Search", { bg = blue, fg = bg, bold = true })
-        vim.api.nvim_set_hl(0, "IncSearch", { bg = purple, fg = bg, bold = true })
-        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = cyan, bg = "NONE", bold = true })
-        vim.api.nvim_set_hl(0, "Comment", { fg = muted, italic = true })
+			vim.api.nvim_set_hl(0, 'Operator', { fg = '#fff1ef' })
+			vim.api.nvim_set_hl(0, 'Delimiter', { fg = '#fff1ef' })
+			vim.api.nvim_set_hl(0, '@punctuation.bracket', { link = 'Delimiter' })
+			vim.api.nvim_set_hl(0, '@punctuation.delimiter', { link = 'Delimiter' })
 
-        vim.api.nvim_set_hl(0, "Function", { fg = blue, bold = true })
-        vim.api.nvim_set_hl(0, "Keyword", { fg = purple, bold = true })
-        vim.api.nvim_set_hl(0, "Statement", { fg = purple, bold = true })
-        vim.api.nvim_set_hl(0, "Type", { fg = cyan, bold = true })
-        vim.api.nvim_set_hl(0, "String", { fg = green })
-        vim.api.nvim_set_hl(0, "DiagnosticError", { fg = red })
-        vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#fff9a5" })
-        vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = blue })
-        vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = cyan })
+			vim.api.nvim_set_hl(0, 'Comment', {
+				fg = '#a59a99',
+				italic = true
+			})
 
-        -- Lazy / Mason / WhichKey style
-        vim.api.nvim_set_hl(0, "LazyNormal", { bg = bg, fg = fg })
-        vim.api.nvim_set_hl(0, "MasonNormal", { bg = bg, fg = fg })
-        vim.api.nvim_set_hl(0, "WhichKeyFloat", { bg = bg, fg = fg })
-      end
-
-      vim.schedule(apply_theme)
-
-      -- Auto reload when DMS regenerates this file
-      local current_file_path = vim.fn.stdpath("config") .. "/lua/plugins/dankcolors.lua"
-
-      if not _G.__dms_neovim_theme_watcher then
-        local uv = vim.uv or vim.loop
-        _G.__dms_neovim_theme_watcher = uv.new_fs_event()
-
-        _G.__dms_neovim_theme_watcher:start(
-          current_file_path,
-          {},
-          vim.schedule_wrap(function()
-            local ok, new_spec = pcall(dofile, current_file_path)
-
-            if ok and new_spec and new_spec[1] and new_spec[1].config then
-              new_spec[1].config()
-              vim.notify("DMS Neovim theme reloaded", vim.log.levels.INFO)
-            end
-          end)
-        )
-      end
-    end,
-  },
+			local current_file_path = vim.fn.stdpath("config") .. "/lua/plugins/dankcolors.lua"
+			if not _G._matugen_theme_watcher then
+				local uv = vim.uv or vim.loop
+				_G._matugen_theme_watcher = uv.new_fs_event()
+				_G._matugen_theme_watcher:start(current_file_path, {}, vim.schedule_wrap(function()
+					local new_spec = dofile(current_file_path)
+					if new_spec and new_spec[1] and new_spec[1].config then
+						new_spec[1].config()
+						print("Theme reload")
+					end
+				end))
+			end
+		end
+	}
 }
