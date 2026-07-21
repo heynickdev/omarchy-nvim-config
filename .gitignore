@@ -7,3 +7,5 @@ foo.*
 *.log
 data
 ./lua/plugins/dankcolors.lua
+colors/dms.lua
+lua/lualine/themes/dms.lua
