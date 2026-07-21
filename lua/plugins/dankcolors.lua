@@ -1,80 +1,4 @@
 return {
-<<<<<<< Updated upstream
-	{
-		"RRethy/base16-nvim",
-		priority = 1000,
-		config = function()
-			require('base16-colorscheme').setup({
-				base00 = '#131318',
-				base01 = '#131318',
-				base02 = '#999aa5',
-				base03 = '#999aa5',
-				base04 = '#eff0ff',
-				base05 = '#f8f9ff',
-				base06 = '#f8f9ff',
-				base07 = '#f8f9ff',
-				base08 = '#ff9fb7',
-				base09 = '#ff9fb7',
-				base0A = '#c6cbff',
-				base0B = '#a5ffb5',
-				base0C = '#e1e3ff',
-				base0D = '#c6cbff',
-				base0E = '#d0d4ff',
-				base0F = '#d0d4ff',
-			})
-
-			vim.api.nvim_set_hl(0, 'Visual', {
-				bg = '#999aa5',
-				fg = '#f8f9ff',
-				bold = true
-			})
-			vim.api.nvim_set_hl(0, 'Statusline', {
-				bg = '#c6cbff',
-				fg = '#131318',
-			})
-			vim.api.nvim_set_hl(0, 'LineNr', { fg = '#999aa5' })
-			vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#e1e3ff', bold = true })
-
-			vim.api.nvim_set_hl(0, 'Statement', {
-				fg = '#d0d4ff',
-				bold = true
-			})
-			vim.api.nvim_set_hl(0, 'Keyword', { link = 'Statement' })
-			vim.api.nvim_set_hl(0, 'Repeat', { link = 'Statement' })
-			vim.api.nvim_set_hl(0, 'Conditional', { link = 'Statement' })
-
-			vim.api.nvim_set_hl(0, 'Function', {
-				fg = '#c6cbff',
-				bold = true
-			})
-			vim.api.nvim_set_hl(0, 'Macro', {
-				fg = '#c6cbff',
-				italic = true
-			})
-			vim.api.nvim_set_hl(0, '@function.macro', { link = 'Macro' })
-
-			vim.api.nvim_set_hl(0, 'Type', {
-				fg = '#e1e3ff',
-				bold = true,
-				italic = true
-			})
-			vim.api.nvim_set_hl(0, 'Structure', { link = 'Type' })
-
-			vim.api.nvim_set_hl(0, 'String', {
-				fg = '#a5ffb5',
-				italic = true
-			})
-
-			vim.api.nvim_set_hl(0, 'Operator', { fg = '#eff0ff' })
-			vim.api.nvim_set_hl(0, 'Delimiter', { fg = '#eff0ff' })
-			vim.api.nvim_set_hl(0, '@punctuation.bracket', { link = 'Delimiter' })
-			vim.api.nvim_set_hl(0, '@punctuation.delimiter', { link = 'Delimiter' })
-
-			vim.api.nvim_set_hl(0, 'Comment', {
-				fg = '#999aa5',
-				italic = true
-			})
-=======
   {
     "RRethy/base16-nvim",
     lazy = false,
@@ -152,7 +76,6 @@ return {
         vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#fffba5" })
         vim.api.nvim_set_hl(0, "DiagnosticInfo", { fg = blue })
         vim.api.nvim_set_hl(0, "DiagnosticHint", { fg = cyan })
->>>>>>> Stashed changes
 
         -- Lazy / Mason / WhichKey style
         vim.api.nvim_set_hl(0, "LazyNormal", { bg = bg, fg = fg })
