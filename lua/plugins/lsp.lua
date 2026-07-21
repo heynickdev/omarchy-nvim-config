@@ -26,12 +26,14 @@ return {
           "svelte",
           "templ",
           "typescriptreact",
+          "vue", -- Added for Nuxt 4 support
         },
         init_options = {
           includeLanguages = {
             templ = "html",
             htmldjango = "html",
             svelte = "html",
+            vue = "html", -- Ensures HTML expansions work smoothly in Vue templates
           },
         },
       },
