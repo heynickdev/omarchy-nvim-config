@@ -9,6 +9,7 @@ return {
     },
   },
 
+
   -- The workflow plugin (Handles running, building, testing, and debugging)
   {
     "GustavEikaas/easy-dotnet.nvim",
