@@ -9,11 +9,11 @@ return {
     config = function(_, opts)
       -- Call the default setup function
       require("supermaven-nvim").setup(opts)
-      
+
       -- 🛑 CRITICAL FIX: Run the command synchronously to acknowledge the free tier,
       -- then immediately shut the engine down so it remains off until toggled.
       vim.cmd("SupermavenUseFree")
-      
+
       local supermaven = require("supermaven-nvim.api")
       if supermaven.is_running() then
         supermaven.stop()

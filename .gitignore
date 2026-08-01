@@ -9,3 +9,5 @@ data
 ./lua/plugins/dankcolors.lua
 colors/dms.lua
 lua/lualine/themes/dms.lua
+lazy-lock.json
+lazyvim.json
