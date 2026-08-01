@@ -475,6 +475,9 @@ map("n", "<leader>y", start_system_clipboard_yank, {
 map("x", "<leader>y", yank_visual_to_system_clipboard, {
   desc = "Yank Selection to System Clipboard",
 })
+map("x", "<leader>Y", yank_visual_to_system_clipboard, {
+  desc = "Yank Selection to System Clipboard",
+})
 map("n", "<leader>Y", yank_to_end_of_line_to_system_clipboard, {
   desc = "Yank to End of Line to System Clipboard",
 })
