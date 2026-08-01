@@ -10,4 +10,3 @@ data
 colors/dms.lua
 lua/lualine/themes/dms.lua
 lazy-lock.json
-lazyvim.json

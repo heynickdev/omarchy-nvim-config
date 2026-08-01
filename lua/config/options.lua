@@ -47,7 +47,7 @@ vim.g.netrw_hide = 1
 vim.g.netrw_list_hide = [[^\.$,^\.\.$,^\./$,^\.\./$]]
 vim.g.netrw_bufsettings = "noma nomod nu rnu nobl nowrap ro"
 
-vim.opt.clipboard = "unnamedplus"
+-- vim.opt.clipboard = "unnamedplus"
 
 vim.g.autoformat = false
 vim.g.editorconfig = true
