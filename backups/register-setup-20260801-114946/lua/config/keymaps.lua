@@ -173,8 +173,8 @@ Snacks.toggle.dim():map("<leader>uD") -- Binds Space+uD to toggle an active-wind
 Snacks.toggle.animate():map("<leader>ua") -- Binds Space+ua to toggle UI animations globally (scrolling, window resizing).
 Snacks.toggle.indent():map("<leader>ug") -- Binds Space+ug to toggle the visibility of vertical indentation guide lines.
 Snacks.toggle.scroll():map("<leader>uS") -- Binds Space+uS to toggle smooth scrolling behavior.
-Snacks.toggle.profiler():map("<leader>zpp") -- Binds Space+zpp to toggle the Snacks performance profiler.
-Snacks.toggle.profiler_highlights():map("<leader>zph") -- Binds Space+zph to toggle profiler highlights.
+Snacks.toggle.profiler():map("<leader>dpp") -- Binds Space+dpp to toggle the Snacks performance profiler for debugging slow Neovim setups.
+Snacks.toggle.profiler_highlights():map("<leader>dph") -- Binds Space+dph to toggle highlight groups specific to the profiler UI.
 
 if vim.lsp.inlay_hint then -- Checks if the current Neovim binary actually supports LSP inlay hints (introduced in v0.10).
   Snacks.toggle.inlay_hints():map("<leader>uh") -- If supported, binds Space+uh to toggle inline variable/type hints provided by the language server.
@@ -303,64 +303,14 @@ Snacks.toggle.zen():map("<leader>uz") -- Binds Space+uz to enter a distraction-f
 -- ==========================================
 -- BUFFER-WIDE ACTIONS (Prefix <leader>a)
 -- ==========================================
-local function get_buffer_lines()
-  return vim.api.nvim_buf_get_lines(0, 0, -1, false)
-end
-
-local function set_buffer_lines(lines)
-  if not lines or #lines == 0 then
-    lines = { "" }
-  end
-
-  vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
-  vim.api.nvim_win_set_cursor(0, { 1, 0 })
-end
-
-local function copy_all_local()
-  local lines = get_buffer_lines()
-
-  -- Match normal yank behaviour: register 0 and the unnamed register.
-  vim.fn.setreg("0", lines, "V")
-  vim.fn.setreg('"', lines, "V")
-end
-
-local function delete_all_local()
-  local lines = get_buffer_lines()
-
-  -- Match normal line deletion behaviour: register 1 and unnamed register.
-  vim.fn.setreg("1", lines, "V")
-  vim.fn.setreg('"', lines, "V")
-  set_buffer_lines({ "" })
-end
-
-local function replace_all_from_register(register)
-  local lines = vim.fn.getreg(register, 1, true)
-
-  if type(lines) ~= "table" then
-    lines = vim.split(lines or "", "\n", { plain = true })
-  end
-
-  set_buffer_lines(lines)
-end
-
-map("n", "<leader>av", "ggVG", { desc = "Select All" })
-map("n", "<leader>ac", copy_all_local, { desc = "Copy All Locally" })
-map("n", "<leader>ad", delete_all_local, { desc = "Delete All Locally" })
-map("n", "<leader>ap", function()
-  replace_all_from_register('"')
-end, { desc = "Replace All from Local Register" })
-
-map("n", "<leader>aC", function()
-  vim.fn.setreg("+", get_buffer_lines(), "V")
-end, { desc = "Copy All to System Clipboard" })
-
-map("n", "<leader>aD", function()
-  set_buffer_lines({ "" })
-end, { desc = "Delete All into Nothing" })
-
-map("n", "<leader>aP", function()
-  replace_all_from_register("+")
-end, { desc = "Replace All from System Clipboard" })
+vim.keymap.set("n", "<leader>av", "ggVG", { desc = "Select All" }) -- visual all
+vim.keymap.set("n", "<leader>ac", 'mzggVG"+y`z:delmarks z<CR>', { desc = "Copy All to Clipboard" }) -- copy all
+vim.keymap.set("n", "<leader>ad", function() -- delete all
+  vim.api.nvim_feedkeys('ggVG"_d', "t", true)
+end, { desc = "Delete All (Black Hole)", noremap = true, silent = true })
+vim.keymap.set("n", "<leader>ap", function() -- paste all
+  vim.api.nvim_feedkeys('ggVG"+p', "t", true)
+end, { desc = "Replace All with Clipboard", noremap = true, silent = true })
 
 pcall(vim.keymap.del, "n", "<leader>e")
 pcall(vim.keymap.del, "n", "<leader>E")
@@ -386,117 +336,11 @@ end, {
   silent = true,
 })
 
--- ==========================================
--- LOCAL REGISTERS + EXPLICIT SYSTEM CLIPBOARD
--- ==========================================
-
--- Reclaim the complete <leader>d namespace from LazyVim/DAP/DB plugins.
--- Debugger mappings are defined under <leader>z in lua/plugins/dap.lua.
-local function clear_leader_prefix(prefix)
-  local leader = vim.g.mapleader or "\\"
-  local encoded_prefix = vim.api.nvim_replace_termcodes(leader .. prefix, true, true, true)
-
-  for _, mode in ipairs({ "n", "x", "o" }) do
-    for _, mapping in ipairs(vim.api.nvim_get_keymap(mode)) do
-      local encoded_lhs = vim.api.nvim_replace_termcodes(mapping.lhs, true, true, true)
-
-      if encoded_lhs:sub(1, #encoded_prefix) == encoded_prefix then
-        pcall(vim.keymap.del, mode, mapping.lhs)
-      end
-    end
-  end
-end
-
-clear_leader_prefix("d")
-clear_leader_prefix("D")
-
-local function save_local_registers()
-  local saved = {}
-
-  for _, register in ipairs({ '"', "0", "1", "-" }) do
-    saved[register] = vim.fn.getreginfo(register)
-  end
-
-  return saved
-end
-
-local function restore_local_registers(saved)
-  for register, info in pairs(saved) do
-    vim.fn.setreg(register, info.regcontents or {}, info.regtype or "v")
-  end
-end
-
--- Operator used by <leader>y{motion}. It copies only to the + register and
--- then restores Neovim's local unnamed/yank/delete registers.
-_G.NickYankToSystemClipboard = function(operator_type)
-  local saved = save_local_registers()
-  local selection
-
-  if operator_type == "line" then
-    selection = "'[V']"
-  elseif operator_type == "block" then
-    selection = "`[\022`]"
-  else
-    selection = "`[v`]"
-  end
-
-  vim.cmd('silent keepjumps normal! ' .. selection .. '"+y')
-  restore_local_registers(saved)
-end
-
-local function start_system_clipboard_yank()
-  vim.go.operatorfunc = "v:lua.NickYankToSystemClipboard"
-  return "g@"
-end
-
-local function yank_visual_to_system_clipboard()
-  local saved = save_local_registers()
-
-  vim.cmd('silent keepjumps normal! gv"+y')
-  restore_local_registers(saved)
-end
-
-local function yank_to_end_of_line_to_system_clipboard()
-  local line = vim.api.nvim_get_current_line()
-  local column = vim.api.nvim_win_get_cursor(0)[2]
-
-  vim.fn.setreg("+", line:sub(column + 1), "v")
-end
-
-local function yank_line_to_system_clipboard()
-  vim.fn.setreg("+", { vim.api.nvim_get_current_line() }, "V")
-end
-
--- System clipboard yanks.
-map("n", "<leader>y", start_system_clipboard_yank, {
-  expr = true,
-  desc = "Yank Motion to System Clipboard",
-})
-map("x", "<leader>y", yank_visual_to_system_clipboard, {
-  desc = "Yank Selection to System Clipboard",
-})
-map("x", "<leader>Y", yank_visual_to_system_clipboard, {
-  desc = "Yank Selection to System Clipboard",
-})
-map("n", "<leader>Y", yank_to_end_of_line_to_system_clipboard, {
-  desc = "Yank to End of Line to System Clipboard",
-})
-map("n", "<leader>yy", yank_line_to_system_clipboard, {
-  desc = "Yank Line to System Clipboard",
-})
-
--- System clipboard pastes. Visual paste deletes the selection into the
--- black-hole register so it does not replace your local paste register.
-map("n", "<leader>p", '"+p', { desc = "Paste System Clipboard After" })
-map("n", "<leader>P", '"+P', { desc = "Paste System Clipboard Before" })
-map("x", "<leader>p", '"_d"+P', { desc = "Replace Selection from System Clipboard" })
-map("x", "<leader>P", '"_d"+P', { desc = "Replace Selection from System Clipboard" })
-
--- Black-hole deletes.
-map("n", "<leader>d", '"_d', { desc = "Delete Motion into Nothing" })
-map("x", "<leader>d", '"_d', { desc = "Delete Selection into Nothing" })
-map("n", "<leader>D", '"_D', { desc = "Delete to End of Line into Nothing" })
-map("n", "<leader>dd", '"_dd', { desc = "Delete Line into Nothing" })
+-- Yanking (copying) TO the system clipboard
+-- Changed <leader>y to <leader>Y to prevent timeout conflicts with <leader>yy
+vim.keymap.set("n", "<leader>Y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+Shift+Y in normal mode to initiate a copy operation routed to the OS clipboard.
+vim.keymap.set("v", "<leader>Y", '"+y', { desc = "Yank to System Clipboard", noremap = true, silent = true }) -- Binds Space+Shift+Y in visual mode to copy the active selection directly to the OS clipboard.
+vim.keymap.set("n", "<leader>yy", '"+Y', { desc = "Yank Line to System Clipboard", noremap = true, silent = true }) -- Binds Space+yy to copy the entire current line to the OS clipboard.
 
 -- Function to toggle LSP clients for the current buffer
 local function toggle_lsp() -- Defines a custom function to handle restarting memory-heavy language servers.

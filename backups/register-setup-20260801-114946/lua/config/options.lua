@@ -19,6 +19,7 @@ vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.smartindent = true
+
 vim.opt.swapfile = false
 vim.opt.backup = false
 
@@ -46,9 +47,7 @@ vim.g.netrw_hide = 1
 vim.g.netrw_list_hide = [[^\.$,^\.\.$,^\./$,^\.\./$]]
 vim.g.netrw_bufsettings = "noma nomod nu rnu nobl nowrap ro"
 
--- Keep Neovim's unnamed register local.
--- Use the explicit + register mappings in keymaps.lua for the system clipboard.
-vim.opt.clipboard = ""
+-- vim.opt.clipboard = "unnamedplus"
 
 vim.g.autoformat = false
 vim.g.editorconfig = true
