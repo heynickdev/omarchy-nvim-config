@@ -21,7 +21,17 @@ return {
     -- Stop Neo-tree/LazyVim from using <leader>E
     {
       "<leader>E",
-      false,
+      function()
+        local current_file = vim.api.nvim_buf_get_name(0)
+        local directory = current_file ~= "" and vim.fn.fnamemodify(current_file, ":p:h") or nil
+
+        if directory then
+          vim.cmd("Explore " .. vim.fn.fnameescape(directory))
+        else
+          vim.cmd.Explore()
+        end
+      end,
+      desc = "Open netrw",
     },
   },
 

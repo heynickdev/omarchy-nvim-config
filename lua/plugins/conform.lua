@@ -14,6 +14,7 @@ return {
       json = { "prettierd" },
 
       -- Backend & Databases
+      dart = { "dart_format" },
       go = { "goimports-reviser", "gofmt" },
       python = { "ruff_organize_imports", "ruff_format" },
       sql = { "pg_format" },
@@ -31,9 +32,7 @@ return {
       yaml = { "prettierd" },
       markdown = { "prettierd" },
     },
-
-
-    -- 3. Custom Formatter Rules (Indentation & Capitalization)
+    -- Custom formatter rules
     formatters = {
       pg_format = {
         args = { "--spaces", "2", "--keyword-case", "2", "--function-case", "2", "--type-case", "2", "-" },

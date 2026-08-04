@@ -9,9 +9,30 @@ return {
     dependencies = { "rafamadriz/friendly-snippets" },
 
     keys = {
-      { "<C-s>e", function() require("luasnip").expand() end, mode = "i", desc = "Snippet: Expand" },
-      { "<C-s>;", function() require("luasnip").jump(1) end, mode = { "i", "s" }, desc = "Snippet: Jump Forward" },
-      { "<C-s>,", function() require("luasnip").jump(-1) end, mode = { "i", "s" }, desc = "Snippet: Jump Backward" },
+      {
+        "<C-s>e",
+        function()
+          require("luasnip").expand()
+        end,
+        mode = "i",
+        desc = "Snippet: Expand",
+      },
+      {
+        "<C-s>;",
+        function()
+          require("luasnip").jump(1)
+        end,
+        mode = { "i", "s" },
+        desc = "Snippet: Jump Forward",
+      },
+      {
+        "<C-s>,",
+        function()
+          require("luasnip").jump(-1)
+        end,
+        mode = { "i", "s" },
+        desc = "Snippet: Jump Backward",
+      },
       {
         "<C-E>",
         function()

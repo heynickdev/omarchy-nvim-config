@@ -38,35 +38,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-vim.api.nvim_create_autocmd("User", {
-  pattern = "VeryLazy",
-  callback = function()
-    pcall(vim.keymap.del, "n", "<leader>e")
-    pcall(vim.keymap.del, "n", "<leader>E")
-
-    vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle reveal<CR>", {
-      desc = "Toggle Neo-tree",
-      noremap = true,
-      silent = true,
-    })
-
-    vim.keymap.set("n", "<leader>E", function()
-      local current_file = vim.api.nvim_buf_get_name(0)
-
-      if current_file ~= "" then
-        local dir = vim.fn.fnamemodify(current_file, ":p:h")
-        vim.cmd("Explore " .. vim.fn.fnameescape(dir))
-      else
-        vim.cmd("Explore")
-      end
-    end, {
-      desc = "Open netrw",
-      noremap = true,
-      silent = true,
-    })
-  end,
-})
-
 -- --- ORGANIZE IMPORTS ON SAVE (Go, Svelte, TS, JS, Vue) ---
 local function organize_imports()
   local clients = vim.lsp.get_clients({ bufnr = 0 })
@@ -143,10 +114,10 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "man",
   callback = function()
     -- Link dull man page highlights to vibrant code highlights
-    vim.api.nvim_set_hl(0, 'manTitle', { link = 'Keyword', default = false })
-    vim.api.nvim_set_hl(0, 'manSectionHeading', { link = 'Function', default = false })
-    vim.api.nvim_set_hl(0, 'manOptionDesc', { link = 'String', default = false })
-    vim.api.nvim_set_hl(0, 'manReference', { link = 'Type', default = false })
+    vim.api.nvim_set_hl(0, "manTitle", { link = "Keyword", default = false })
+    vim.api.nvim_set_hl(0, "manSectionHeading", { link = "Function", default = false })
+    vim.api.nvim_set_hl(0, "manOptionDesc", { link = "String", default = false })
+    vim.api.nvim_set_hl(0, "manReference", { link = "Type", default = false })
   end,
 })
 
@@ -155,20 +126,20 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",
   callback = function()
     local transparent_groups = {
-      "NormalFloat",     -- Floating windows
-      "FloatBorder",     -- Borders of floating windows
-      "NeoTreeNormal",   -- Neo-tree background
+      "NormalFloat", -- Floating windows
+      "FloatBorder", -- Borders of floating windows
+      "NeoTreeNormal", -- Neo-tree background
       "NeoTreeNormalNC", -- Neo-tree background (non-current)
-      "WinSeparator",    -- The vertical split line
-      "VertSplit",       -- Legacy vertical split line
+      "WinSeparator", -- The vertical split line
+      "VertSplit", -- Legacy vertical split line
     }
 
     for _, group in ipairs(transparent_groups) do
       -- Force the background to be completely transparent
       vim.api.nvim_set_hl(0, group, { bg = "NONE", ctermbg = "NONE" })
     end
-    
+
     -- Optional: Dim the bright vertical separator line so it's less harsh
-    vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#565f89", bg = "NONE" }) 
+    vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#565f89", bg = "NONE" })
   end,
 })

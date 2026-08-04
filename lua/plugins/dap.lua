@@ -3,8 +3,7 @@ local function remove_old_debug_keys(keys)
 
   for _, key in ipairs(keys or {}) do
     local lhs = key[1]
-    local is_old_debug_key = type(lhs) == "string"
-      and (lhs:match("^<leader>d") ~= nil or lhs:match("^d") ~= nil)
+    local is_old_debug_key = type(lhs) == "string" and (lhs:match("^<leader>d") ~= nil or lhs:match("^d") ~= nil)
 
     if not is_old_debug_key then
       table.insert(filtered, key)

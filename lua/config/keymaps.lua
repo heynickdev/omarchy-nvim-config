@@ -1,259 +1,27 @@
--- Keymaps are automatically loaded on the VeryLazy event, deferring execution to improve Neovim's initial launch speed.
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here to tailor the editor to specific project workflows.
---
--- This file is automatically loaded by lazyvim.config.init during the initialization sequence.
+-- LazyVim provides the standard editor mappings. Keep only local overrides here.
+local map = vim.keymap.set
 
--- DO NOT USE `LazyVim.safe_keymap_set` IN YOUR OWN CONFIG!! -- (Warning from LazyVim maintainers regarding core overrides).
--- use `vim.keymap.set` instead -- (Standard advice for user-defined mappings to avoid conflicts).
-local map = vim.keymap.set -- Creates a localized, shorter alias for the LazyVim-specific keymap function for cleaner syntax.
+-- Move LazyVim's profiler mappings away from the reclaimed <leader>d namespace.
+Snacks.toggle.profiler():map("<leader>zpp")
+Snacks.toggle.profiler_highlights():map("<leader>zph")
 
--- better up/down
-map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true }) -- Maps 'j' in normal/visual modes to move down by visual lines (gj) if no count is provided, handling wrapped lines gracefully.
-map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true }) -- Mirrors the 'j' mapping logic for the Down arrow key.
-map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true }) -- Maps 'k' in normal/visual modes to move up by visual lines (gk) if no count is provided.
-map({ "n", "x" }, "<Up>", "v:count == 0 ? 'gk' : 'k'", { desc = "Up", expr = true, silent = true }) -- Mirrors the 'k' mapping logic for the Up arrow key.
+-- Terminal navigation and a single Ctrl+/ terminal tied to its original cwd.
+map("t", "<Esc>", "<C-\\><C-n>", { desc = "Enter Normal Mode" })
 
--- Move to window using the <ctrl> hjkl keys
-map("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true }) -- Binds Ctrl+h to jump to the Neovim window split to the left.
-map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true }) -- Binds Ctrl+j to jump to the Neovim window split below.
-map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true }) -- Binds Ctrl+k to jump to the Neovim window split above.
-map("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true }) -- Binds Ctrl+l to jump to the Neovim window split to the right.
-
--- Resize window using <ctrl> arrow keys
-map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" }) -- Binds Ctrl+Up to increase the horizontal split height by 2 lines.
-map("n", "<c-down>", "<cmd>resize -2<cr>", { desc = "decrease window height" }) -- Binds Ctrl+Down to decrease the horizontal split height by 2 lines.
-map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease Window Width" }) -- Binds Ctrl+Left to shrink the vertical split width by 2 columns.
-map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase Window Width" }) -- Binds Ctrl+Right to expand the vertical split width by 2 columns.
-
--- Move Lines
-map("n", "<A-j>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down" }) -- Binds Alt+j in normal mode to physically move the current line down, then re-indents it.
-map("n", "<A-k>", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" }) -- Binds Alt+k in normal mode to physically move the current line up, then re-indents it.
-map("i", "<A-j>", "<esc><cmd>m .+1<cr>==gi", { desc = "Move Down" }) -- Binds Alt+j in insert mode to escape, move the line down, re-indent, and return to insert mode.
-map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move Up" }) -- Binds Alt+k in insert mode to escape, move the line up, re-indent, and return to insert mode.
-
-map("v", "<A-j>", ":<c-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "move down" }) -- Binds Alt+j in visual mode to move the entire selected block down and re-select it.
-map("v", "<A-k>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" }) -- Binds Alt+k in visual mode to move the entire selected block up and re-select it.
-
--- buffers
-map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" }) -- Binds Shift+h to cycle to the previously opened buffer in the list.
-map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" }) -- Binds Shift+l to cycle to the next opened buffer in the list.
-map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" }) -- Provides an alternative mapping ([b) to cycle to the previous buffer.
-map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" }) -- Provides an alternative mapping (]b) to cycle to the next buffer.
-map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" }) -- Binds Space+bb to toggle instantly back to the last accessed buffer (alternate file).
-map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" }) -- Provides a faster alternative (Space+`) to toggle to the alternate file.
-map("n", "<leader>bd", function() -- Begins a mapping for Space+bd to trigger buffer deletion.
-  Snacks.bufdelete() -- Calls the Snacks API to delete the current buffer without closing the split window.
-end, { desc = "Delete Buffer" }) -- Closes the function and adds the description metadata.
-map("n", "<leader>bo", function() -- Begins a mapping for Space+bo to close everything else.
-  Snacks.bufdelete.other() -- Calls the Snacks API to delete all open buffers EXCEPT the currently active one.
-end, { desc = "Delete Other Buffers" }) -- Closes the function and adds the description metadata.
-map("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" }) -- Binds Space+bD to violently delete the buffer, which also destroys the window split it resides in.
-
--- Clear search and stop snippet on escape
-map(
-  { "i", "n", "s" },
-  "<esc>",
-  function() -- Maps the Escape key across insert, normal, and select modes to a custom Lua function.
-    vim.cmd("noh") -- Executes the 'nohlsearch' command to clear active search highlighting.
-    LazyVim.cmp.actions.snippet_stop() -- Signals the completion engine (like LuaSnip/blink) to exit the current snippet expansion context.
-    return "<esc>" -- Returns the actual Escape keycode so Neovim still performs its normal Escape behavior.
-  end,
-  { expr = true, desc = "Escape and Clear hlsearch" }
-) -- Marks mapping as an expression (so the return value is executed) and adds a description.
-
--- Clear search, diff update and redraw
--- taken from runtime/lua/_editor.lua
-map( -- Opens the map function call.
-  "n", -- specifies normal mode.
-  "<leader>ur", -- binds to space+ur.
-  "<cmd>nohlsearch<bar>diffupdate<bar>normal! <c-l><cr>", -- clears search highlights, recalculates git/file diffs, and forces a complete screen redraw (ctrl+l).
-  { desc = "Redraw / Clear hlsearch / Diff Update" } -- Configuration table for the mapping description.
-) -- Closes the map function call.
-
--- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
-map("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next Search Result" }) -- Forces 'n' to always search in the forward direction, opening folds (zv) if necessary.
-map("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" }) -- Applies the same forward-search logic to visual mode.
-map("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" }) -- Applies the same forward-search logic to operator-pending mode.
-map("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev Search Result" }) -- Forces 'N' to always search in the backward direction, opening folds.
-map("x", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev Search Result" }) -- Applies the backward-search logic to visual mode.
-map("o", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev Search Result" }) -- Applies the backward-search logic to operator-pending mode.
-
--- Add undo break-points
-map("i", ",", ",<c-g>u") -- Modifies the comma key in insert mode to add an undo checkpoint right after typing it.
-map("i", ".", ".<c-g>u") -- Modifies the period key in insert mode to add an undo checkpoint right after typing it.
-map("i", ";", ";<c-g>u") -- Modifies the semicolon key in insert mode to add an undo checkpoint right after typing it.
-
--- save file
-map({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" }) -- Binds Ctrl+s across multiple modes to write the file and immediately return to normal mode via escape.
-
---keywordprg
-map("n", "<leader>K", "<cmd>norm! K<cr>", { desc = "Keywordprg" }) -- Binds Space+Shift+K to execute the normal 'K' command (usually looks up documentation/man pages for the word under cursor).
-
--- better indenting
-map("v", "<", "<gv") -- Modifies the '<' key in visual mode to shift text left AND immediately re-select the text block.
-map("v", ">", ">gv") -- Modifies the '>' key in visual mode to shift text right AND immediately re-select the text block.
-
--- commenting
-map("n", "gco", "o<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Below" }) -- Complex macro: opens a line below, clears it, toggles comment status, and enters insert mode inside the comment marker.
-map("n", "gcO", "O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Comment Above" }) -- Complex macro: opens a line above, clears it, toggles comment status, and enters insert mode inside the comment marker.
-
--- lazy
-map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" }) -- Binds Space+l to open the LazyVim plugin manager UI.
-
--- new file
-map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" }) -- Binds Space+fn to open a completely new, empty, unnamed buffer.
-
--- location list
-map("n", "<leader>xl", function() -- Binds Space+xl to execute an anonymous function for toggling the location list.
-  local success, err = pcall(vim.fn.getloclist(0, { winid = 0 }).winid ~= 0 and vim.cmd.lclose or vim.cmd.lopen) -- Safely attempts to check if the location list is open; if true, closes it (`lclose`), otherwise opens it (`lopen`).
-  if not success and err then -- Checks if the `pcall` caught an error during execution.
-    vim.notify(err, vim.log.levels.ERROR) -- Pushes the error message to the Neovim notification system.
-  end -- Closes the error check block.
-end, { desc = "Location List" }) -- Closes the function and sets the keymap description.
-
--- quickfix list
-map(
-  "n",
-  "<leader>xq",
-  function() -- Binds Space+xq to execute an anonymous function for toggling the global quickfix list.
-    local success, err = pcall(vim.fn.getqflist({ winid = 0 }).winid ~= 0 and vim.cmd.cclose or vim.cmd.copen) -- Safely attempts to check if the quickfix window is active; closes (`cclose`) if open, opens (`copen`) if closed.
-    if not success and err then -- Evaluates if the `pcall` failed.
-      vim.notify(err, vim.log.levels.ERROR) -- Displays the resulting error via `vim.notify`.
-    end -- Ends the conditional error handling.
-  end,
-  { desc = "Quickfix List" }
-) -- Closes the anonymous function and applies the description.
-
-map("n", "[q", vim.cmd.cprev, { desc = "Previous Quickfix" }) -- Binds [q to directly invoke the command jumping to the previous item in the quickfix list.
-map("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" }) -- Binds ]q to directly invoke the command jumping to the next item in the quickfix list.
-
--- formatting
-map({ "n", "v" }, "<leader>cf", function() -- Binds Space+cf in normal and visual modes to trigger code formatting.
-  LazyVim.format({ force = true }) -- Calls the LazyVim format API, forcing execution even if auto-format on save is disabled.
-end, { desc = "Format" }) -- Closes the format function mapping.
-
--- diagnostic
-local diagnostic_goto = function(next, severity) -- Defines a local helper function that returns a customized jump function based on direction and severity.
-  return function() -- Returns the actual executable closure to be mapped to a key.
-    vim.diagnostic.jump({ -- Calls the Neovim 0.10+ API to jump between LSP diagnostics.
-      count = (next and 1 or -1) * vim.v.count1, -- Determines jump direction (forward for 1, backward for -1) multiplied by any numerical count provided by the user.
-      severity = severity and vim.diagnostic.severity[severity] or nil, -- Filters jumps by ERROR or WARN if a severity was passed, otherwise jumps to any diagnostic.
-      float = true, -- Ensures the floating window containing the diagnostic message opens immediately upon jumping.
-    }) -- Closes the diagnostic.jump configuration table.
-  end -- Ends the returned closure.
-end -- Ends the factory function definition.
-map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" }) -- Binds Space+cd to manually open the floating window for the diagnostic on the current line.
-map("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" }) -- Binds ]d to jump to the next diagnostic of any severity.
-map("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" }) -- Binds [d to jump to the previous diagnostic of any severity.
-map("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" }) -- Binds ]e to jump strictly to the next LSP error.
-map("n", "[e", diagnostic_goto(false, "ERROR"), { desc = "Prev Error" }) -- Binds [e to jump strictly to the previous LSP error.
-map("n", "]w", diagnostic_goto(true, "WARN"), { desc = "Next Warning" }) -- Binds ]w to jump strictly to the next LSP warning.
-map("n", "[w", diagnostic_goto(false, "WARN"), { desc = "Prev Warning" }) -- Binds [w to jump strictly to the previous LSP warning.
-
--- stylua: ignore start -- Instructs the StyLua formatter to skip formatting the following lines to preserve exact vertical alignment.
-
--- toggle options
-LazyVim.format.snacks_toggle():map("<leader>uf") -- Binds Space+uf to a Snacks toggle that enables/disables automatic formatting on save.
-LazyVim.format.snacks_toggle(true):map("<leader>uF") -- Binds Space+uF to a Snacks toggle for formatting, specifically targeting buffer-local vs global overrides.
-Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>us") -- Binds Space+us to toggle Neovim's built-in spell checker.
-Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>uw") -- Binds Space+uw to toggle visual line wrapping.
-Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>uL") -- Binds Space+uL to toggle relative line numbers in the gutter.
-Snacks.toggle.diagnostics():map("<leader>ud") -- Binds Space+ud to toggle the visibility of virtual text and signs for LSP diagnostics.
-Snacks.toggle.line_number():map("<leader>ul") -- Binds Space+ul to completely hide or show the line number column.
-Snacks.toggle
-  .option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2, name = "Conceal Level" })
-  :map("<leader>uc") -- Binds Space+uc to toggle markdown/syntax concealment (hiding formatting characters like **).
-Snacks.toggle
-  .option("showtabline", { off = 0, on = vim.o.showtabline > 0 and vim.o.showtabline or 2, name = "Tabline" })
-  :map("<leader>uA") -- Binds Space+uA to toggle the visibility of the buffer/tab bar at the top of the screen.
-Snacks.toggle.treesitter():map("<leader>uT") -- Binds Space+uT to toggle Treesitter-based syntax highlighting on and off.
-Snacks.toggle.option("background", { off = "light", on = "dark", name = "Dark Background" }):map("<leader>ub") -- Binds Space+ub to switch between the 'light' and 'dark' variations of your active colorscheme.
-Snacks.toggle.dim():map("<leader>uD") -- Binds Space+uD to toggle an active-window dimming effect.
-Snacks.toggle.animate():map("<leader>ua") -- Binds Space+ua to toggle UI animations globally (scrolling, window resizing).
-Snacks.toggle.indent():map("<leader>ug") -- Binds Space+ug to toggle the visibility of vertical indentation guide lines.
-Snacks.toggle.scroll():map("<leader>uS") -- Binds Space+uS to toggle smooth scrolling behavior.
-Snacks.toggle.profiler():map("<leader>zpp") -- Binds Space+zpp to toggle the Snacks performance profiler.
-Snacks.toggle.profiler_highlights():map("<leader>zph") -- Binds Space+zph to toggle profiler highlights.
-
-if vim.lsp.inlay_hint then -- Checks if the current Neovim binary actually supports LSP inlay hints (introduced in v0.10).
-  Snacks.toggle.inlay_hints():map("<leader>uh") -- If supported, binds Space+uh to toggle inline variable/type hints provided by the language server.
-end -- Ends the inlay hint capability check.
--- lazygit
-if vim.fn.executable("lazygit") == 1 then -- Checks the system path to ensure the 'lazygit' terminal UI is installed before mapping keys.
-  map("n", "<leader>gg", function()
-    Snacks.lazygit({ cwd = LazyVim.root.git() })
-  end, { desc = "Lazygit (Root Dir)" }) -- Binds Space+gg to open Lazygit, anchoring the working directory to the project's root .git folder.
-  map("n", "<leader>gG", function()
-    Snacks.lazygit()
-  end, { desc = "Lazygit (cwd)" }) -- Binds Space+gG to open Lazygit using the exact current working directory of the buffer.
-end -- Ends the lazygit installation check.
-
-map("n", "<leader>gL", function()
-  Snacks.picker.git_log()
-end, { desc = "Git Log (cwd)" }) -- Binds Space+gL to open a Snacks picker UI displaying the commit history for the current directory.
-map("n", "<leader>gb", function()
-  Snacks.picker.git_log_line()
-end, { desc = "Git Blame Line" }) -- Binds Space+gb to open a picker showing the git commit history specifically for the line under the cursor.
-map("n", "<leader>gf", function()
-  Snacks.picker.git_log_file()
-end, { desc = "Git Current File History" }) -- Binds Space+gf to open a picker showing the entire commit history for the currently active file.
-map("n", "<leader>gl", function()
-  Snacks.picker.git_log({ cwd = LazyVim.root.git() })
-end, { desc = "Git Log" }) -- Binds Space+gl to show project-wide commit history anchored at the .git root.
-map({ "n", "x" }, "<leader>gB", function()
-  Snacks.gitbrowse()
-end, { desc = "Git Browse (open)" }) -- Binds Space+gB to open the current file/line in the default web browser (GitHub/GitLab).
-map(
-  { "n", "x" },
-  "<leader>gY",
-  function() -- Binds Space+gY to copy the web link of the current file/line to the clipboard.
-    Snacks.gitbrowse({
-      open = function(url)
-        vim.fn.setreg("+", url)
-      end,
-      notify = false,
-    }) -- Modifies the browse behavior: instead of opening a browser, sets the '+' register (system clipboard) to the URL quietly.
-  end,
-  { desc = "Git Browse (copy)" }
-) -- Closes the URL copy function.
-
--- quit
-map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit All" }) -- Binds Space+qq to cleanly exit all open windows and quit Neovim.
-
--- highlights under cursor
-map("n", "<leader>ui", vim.show_pos, { desc = "Inspect Pos" }) -- Binds Space+ui to reveal the specific syntax highlight groups active at the exact cursor position.
-map("n", "<leader>uI", function()
-  vim.treesitter.inspect_tree()
-  vim.api.nvim_input("I")
-end, { desc = "Inspect Tree" }) -- Binds Space+uI to open a side window displaying the parsed Treesitter Abstract Syntax Tree for debugging.
-
--- LazyVim Changelog
-map("n", "<leader>L", function()
-  LazyVim.news.changelog()
-end, { desc = "LazyVim Changelog" }) -- Binds Space+L to fetch and display recent release notes for the LazyVim distribution.
-
--- floating terminal
-map("n", "<leader>fT", function()
-  Snacks.terminal()
-end, { desc = "Terminal (cwd)" }) -- Binds Space+fT to open a floating terminal window localized to the current directory.
-map("n", "<leader>ft", function()
-  Snacks.terminal(nil, { cwd = LazyVim.root() })
-end, { desc = "Terminal (Root Dir)" }) -- Binds Space+ft to open a floating terminal anchored to the project root.
--- Switch from terminal to normal mode with Esc
-vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Enter normal mode" }) -- Maps Escape inside the built-in terminal to trigger the complex keycode required to exit terminal-insert mode.
 local ctrl_slash_terminal_cwd
-local function focus_ctrl_slash_terminal()
+
+local function focus_terminal()
   vim.schedule(function()
-    if vim.bo.buftype == "terminal" then
-      local last_line = vim.api.nvim_buf_line_count(0)
-      vim.api.nvim_win_set_cursor(0, { last_line, 0 })
-      vim.cmd("startinsert")
+    if vim.bo.buftype ~= "terminal" then
+      return
     end
+
+    vim.api.nvim_win_set_cursor(0, { vim.api.nvim_buf_line_count(0), 0 })
+    vim.cmd.startinsert()
   end)
 end
 
-local function toggle_ctrl_slash_terminal()
+local function toggle_terminal()
   if ctrl_slash_terminal_cwd then
     local terminal = Snacks.terminal.get(nil, {
       cwd = ctrl_slash_terminal_cwd,
@@ -262,47 +30,35 @@ local function toggle_ctrl_slash_terminal()
     })
 
     if terminal and terminal:buf_valid() then
-      Snacks.terminal.focus(nil, {
-        cwd = ctrl_slash_terminal_cwd,
-        count = 1,
-      })
-      focus_ctrl_slash_terminal()
+      Snacks.terminal.focus(nil, { cwd = ctrl_slash_terminal_cwd, count = 1 })
+      focus_terminal()
       return
     end
   end
 
   ctrl_slash_terminal_cwd = vim.fn.getcwd(0)
-  Snacks.terminal.focus(nil, {
-    cwd = ctrl_slash_terminal_cwd,
-    count = 1,
-  })
-  focus_ctrl_slash_terminal()
+  Snacks.terminal.focus(nil, { cwd = ctrl_slash_terminal_cwd, count = 1 })
+  focus_terminal()
 end
-map("n", "<c-/>", function()
-  toggle_ctrl_slash_terminal()
-end, { desc = "Terminal (cwd)" }) -- Binds Ctrl+/ to toggle a single terminal opened from the current directory.
-map("n", "<c-_>", function()
-  toggle_ctrl_slash_terminal()
-end, { desc = "which_key_ignore" }) -- Secondary binding for Ctrl+/ (recognized as Ctrl+_ by some terminal emulators) to toggle the terminal.
-map("t", "<c-/>", function()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
-  vim.schedule(toggle_ctrl_slash_terminal)
-end, { desc = "Terminal (cwd)" }) -- Exits terminal input before toggling the Ctrl+/ terminal.
-map("t", "<c-_>", function()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
-  vim.schedule(toggle_ctrl_slash_terminal)
-end, { desc = "which_key_ignore" }) -- Secondary terminal-mode binding for Ctrl+/.
 
--- windows
-map("n", "<leader>-", "<C-W>s<cmd>Ex<cr>", { desc = "Split Window Below", remap = true }) -- Binds Space+- to slice the current window horizontally, placing the new split below.
-map("n", "<leader>|", "<C-W>v<cmd>Ex<cr>", { desc = "Split Window Right", remap = true }) -- Binds Space+| to slice the current window vertically, placing the new split to the right.
-map("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true }) -- Binds Space+wd to close the currently focused window split.
-Snacks.toggle.zoom():map("<leader>wm"):map("<leader>uZ") -- Sets up both Space+wm and Space+uZ to maximize the current window split, hiding the others until toggled again.
-Snacks.toggle.zen():map("<leader>uz") -- Binds Space+uz to enter a distraction-free "Zen Mode" utilizing the Snacks API.
+local function toggle_terminal_from_terminal_mode()
+  local normal_mode = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
+  vim.api.nvim_feedkeys(normal_mode, "n", false)
+  vim.schedule(toggle_terminal)
+end
 
--- ==========================================
--- BUFFER-WIDE ACTIONS (Prefix <leader>a)
--- ==========================================
+map("n", "<C-/>", toggle_terminal, { desc = "Terminal (cwd)" })
+map("n", "<C-_>", toggle_terminal, { desc = "which_key_ignore" })
+map("t", "<C-/>", toggle_terminal_from_terminal_mode, { desc = "Terminal (cwd)" })
+map("t", "<C-_>", toggle_terminal_from_terminal_mode, { desc = "which_key_ignore" })
+
+-- Open Netrw in new splits instead of an empty window.
+map("n", "<leader>-", "<C-W>s<cmd>Explore<cr>", { desc = "Split Below with Netrw", remap = true })
+map("n", "<leader>|", "<C-W>v<cmd>Explore<cr>", { desc = "Split Right with Netrw", remap = true })
+map("n", "<leader>wv", "<cmd>vsplit<cr><cmd>Explore<cr>", { desc = "Split Right with Netrw" })
+
+-- Buffer-wide actions. Lowercase uses the system clipboard; uppercase keeps
+-- Neovim's unnamed register local. `clipboard` remains empty in options.lua.
 local function get_buffer_lines()
   return vim.api.nvim_buf_get_lines(0, 0, -1, false)
 end
@@ -316,91 +72,73 @@ local function set_buffer_lines(lines)
   vim.api.nvim_win_set_cursor(0, { 1, 0 })
 end
 
-local function copy_all_local()
-  local lines = get_buffer_lines()
-
-  -- Match normal yank behaviour: register 0 and the unnamed register.
-  vim.fn.setreg("0", lines, "V")
-  vim.fn.setreg('"', lines, "V")
+local function set_linewise_register(register, lines)
+  vim.fn.setreg(register, lines, "V")
 end
 
-local function delete_all_local()
-  local lines = get_buffer_lines()
+local yank_highlight_namespace = vim.api.nvim_create_namespace("SystemClipboardYankHighlight")
 
-  -- Match normal line deletion behaviour: register 1 and unnamed register.
-  vim.fn.setreg("1", lines, "V")
-  vim.fn.setreg('"', lines, "V")
+local function highlight_yanked_lines(first_line, last_line, first_column, last_column)
+  local buffer = vim.api.nvim_get_current_buf()
+  vim.api.nvim_buf_clear_namespace(buffer, yank_highlight_namespace, 0, -1)
+
+  for line = first_line, last_line do
+    local start_column = line == first_line and (first_column or 0) or 0
+    local end_column = line == last_line and (last_column or -1) or -1
+    vim.api.nvim_buf_add_highlight(buffer, yank_highlight_namespace, "IncSearch", line - 1, start_column, end_column)
+  end
+
+  vim.defer_fn(function()
+    if vim.api.nvim_buf_is_valid(buffer) then
+      vim.api.nvim_buf_clear_namespace(buffer, yank_highlight_namespace, 0, -1)
+    end
+  end, 200)
+end
+
+local function replace_buffer_from_register(register)
+  local lines = vim.fn.getreg(register, 1, true)
+  set_buffer_lines(type(lines) == "table" and lines or vim.split(lines or "", "\n", { plain = true }))
+end
+
+local function copy_buffer_locally()
+  local lines = get_buffer_lines()
+  set_linewise_register("0", lines)
+  set_linewise_register('"', lines)
+end
+
+local function delete_buffer_locally()
+  local lines = get_buffer_lines()
+  set_linewise_register("1", lines)
+  set_linewise_register('"', lines)
   set_buffer_lines({ "" })
 end
 
-local function replace_all_from_register(register)
-  local lines = vim.fn.getreg(register, 1, true)
-
-  if type(lines) ~= "table" then
-    lines = vim.split(lines or "", "\n", { plain = true })
-  end
-
-  set_buffer_lines(lines)
-end
-
 map("n", "<leader>av", "ggVG", { desc = "Select All" })
-map("n", "<leader>ac", copy_all_local, { desc = "Copy All Locally" })
-map("n", "<leader>ad", delete_all_local, { desc = "Delete All Locally" })
-map("n", "<leader>ap", function()
-  replace_all_from_register('"')
-end, { desc = "Replace All from Local Register" })
-
-map("n", "<leader>aC", function()
-  vim.fn.setreg("+", get_buffer_lines(), "V")
+map("n", "<leader>ac", function()
+  set_linewise_register("+", get_buffer_lines())
+  highlight_yanked_lines(1, vim.api.nvim_buf_line_count(0))
 end, { desc = "Copy All to System Clipboard" })
-
+map("n", "<leader>ap", function()
+  replace_buffer_from_register("+")
+end, { desc = "Replace All from System Clipboard" })
+map("n", "<leader>aC", copy_buffer_locally, { desc = "Copy All Locally" })
+map("n", "<leader>aP", function()
+  replace_buffer_from_register('"')
+end, { desc = "Replace All from Local Register" })
+map("n", "<leader>ad", delete_buffer_locally, { desc = "Delete All Locally" })
 map("n", "<leader>aD", function()
   set_buffer_lines({ "" })
 end, { desc = "Delete All into Nothing" })
 
-map("n", "<leader>aP", function()
-  replace_all_from_register("+")
-end, { desc = "Replace All from System Clipboard" })
-
-pcall(vim.keymap.del, "n", "<leader>e")
-pcall(vim.keymap.del, "n", "<leader>E")
-
-vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle reveal<CR>", {
-  desc = "Toggle Neo-tree",
-  noremap = true,
-  silent = true,
-})
-
-vim.keymap.set("n", "<leader>E", function()
-  local current_file = vim.api.nvim_buf_get_name(0)
-
-  if current_file ~= "" then
-    local dir = vim.fn.fnamemodify(current_file, ":p:h")
-    vim.cmd("Explore " .. vim.fn.fnameescape(dir))
-  else
-    vim.cmd("Explore")
-  end
-end, {
-  desc = "Open netrw",
-  noremap = true,
-  silent = true,
-})
-
--- ==========================================
--- LOCAL REGISTERS + EXPLICIT SYSTEM CLIPBOARD
--- ==========================================
-
--- Reclaim the complete <leader>d namespace from LazyVim/DAP/DB plugins.
--- Debugger mappings are defined under <leader>z in lua/plugins/dap.lua.
+-- Reclaim <leader>d from LazyVim/DAP/DB plugins. DAP lives under <leader>z.
 local function clear_leader_prefix(prefix)
   local leader = vim.g.mapleader or "\\"
   local encoded_prefix = vim.api.nvim_replace_termcodes(leader .. prefix, true, true, true)
 
   for _, mode in ipairs({ "n", "x", "o" }) do
     for _, mapping in ipairs(vim.api.nvim_get_keymap(mode)) do
-      local encoded_lhs = vim.api.nvim_replace_termcodes(mapping.lhs, true, true, true)
-
-      if encoded_lhs:sub(1, #encoded_prefix) == encoded_prefix then
+      local lhs = vim.api.nvim_replace_termcodes(mapping.lhs, true, true, true)
+      if lhs:sub(1, #encoded_prefix) == encoded_prefix then
         pcall(vim.keymap.del, mode, mapping.lhs)
       end
     end
@@ -410,153 +148,87 @@ end
 clear_leader_prefix("d")
 clear_leader_prefix("D")
 
-local function save_local_registers()
-  local saved = {}
+local local_registers = { '"', "0", "1", "-" }
 
-  for _, register in ipairs({ '"', "0", "1", "-" }) do
+local function preserve_local_registers(callback)
+  local saved = {}
+  for _, register in ipairs(local_registers) do
     saved[register] = vim.fn.getreginfo(register)
   end
 
-  return saved
-end
+  callback()
 
-local function restore_local_registers(saved)
   for register, info in pairs(saved) do
     vim.fn.setreg(register, info.regcontents or {}, info.regtype or "v")
   end
 end
 
--- Operator used by <leader>y{motion}. It copies only to the + register and
--- then restores Neovim's local unnamed/yank/delete registers.
+-- Operator used by <leader>y{motion}; only the + register is changed.
 _G.NickYankToSystemClipboard = function(operator_type)
-  local saved = save_local_registers()
-  local selection
-
-  if operator_type == "line" then
-    selection = "'[V']"
-  elseif operator_type == "block" then
-    selection = "`[\022`]"
-  else
-    selection = "`[v`]"
-  end
-
-  vim.cmd('silent keepjumps normal! ' .. selection .. '"+y')
-  restore_local_registers(saved)
+  local selection = operator_type == "line" and "'[V']" or operator_type == "block" and "`[\022`]" or "`[v`]"
+  preserve_local_registers(function()
+    vim.cmd("silent keepjumps normal! " .. selection .. '"+y')
+  end)
 end
 
-local function start_system_clipboard_yank()
+map("n", "<leader>y", function()
   vim.go.operatorfunc = "v:lua.NickYankToSystemClipboard"
   return "g@"
-end
-
-local function yank_visual_to_system_clipboard()
-  local saved = save_local_registers()
-
-  vim.cmd('silent keepjumps normal! gv"+y')
-  restore_local_registers(saved)
-end
-
-local function yank_to_end_of_line_to_system_clipboard()
+end, { expr = true, desc = "Yank Motion to System Clipboard" })
+map("x", "<leader>y", function()
+  preserve_local_registers(function()
+    vim.cmd('silent keepjumps normal! gv"+y')
+  end)
+end, { desc = "Yank Selection to System Clipboard" })
+map("n", "<leader>Y", function()
   local line = vim.api.nvim_get_current_line()
-  local column = vim.api.nvim_win_get_cursor(0)[2]
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  set_linewise_register("+", line:sub(cursor[2] + 1))
+  highlight_yanked_lines(cursor[1], cursor[1], cursor[2])
+end, { desc = "Yank to End of Line to System Clipboard" })
+map("n", "<leader>yy", function()
+  set_linewise_register("+", { vim.api.nvim_get_current_line() })
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  highlight_yanked_lines(line, line)
+end, { desc = "Yank Line to System Clipboard" })
 
-  vim.fn.setreg("+", line:sub(column + 1), "v")
-end
-
-local function yank_line_to_system_clipboard()
-  vim.fn.setreg("+", { vim.api.nvim_get_current_line() }, "V")
-end
-
--- System clipboard yanks.
-map("n", "<leader>y", start_system_clipboard_yank, {
-  expr = true,
-  desc = "Yank Motion to System Clipboard",
-})
-map("x", "<leader>y", yank_visual_to_system_clipboard, {
-  desc = "Yank Selection to System Clipboard",
-})
-map("n", "<leader>Y", yank_to_end_of_line_to_system_clipboard, {
-  desc = "Yank to End of Line to System Clipboard",
-})
-map("n", "<leader>yy", yank_line_to_system_clipboard, {
-  desc = "Yank Line to System Clipboard",
-})
-
--- System clipboard pastes. Visual paste deletes the selection into the
--- black-hole register so it does not replace your local paste register.
 map("n", "<leader>p", '"+p', { desc = "Paste System Clipboard After" })
 map("n", "<leader>P", '"+P', { desc = "Paste System Clipboard Before" })
 map("x", "<leader>p", '"_d"+P', { desc = "Replace Selection from System Clipboard" })
 map("x", "<leader>P", '"_d"+P', { desc = "Replace Selection from System Clipboard" })
 
--- Black-hole deletes.
 map("n", "<leader>d", '"_d', { desc = "Delete Motion into Nothing" })
 map("x", "<leader>d", '"_d', { desc = "Delete Selection into Nothing" })
 map("n", "<leader>D", '"_D', { desc = "Delete to End of Line into Nothing" })
 map("n", "<leader>dd", '"_dd', { desc = "Delete Line into Nothing" })
 
--- Function to toggle LSP clients for the current buffer
-local function toggle_lsp() -- Defines a custom function to handle restarting memory-heavy language servers.
-  local clients = vim.lsp.get_active_clients({ bufnr = 0 }) -- Queries the Neovim LSP API to get a list of servers attached to the current buffer.
-  if #clients > 0 then -- Checks if the array of active clients contains at least one server.
-    -- LSP is active, so stop it -- (User-provided comment)
-    print("Stopping LSP clients for current buffer...") -- Outputs a status message to the command line.
-    vim.lsp.stop_client(clients) -- Issues the command to cleanly shut down the attached server processes.
-  else -- Executes if no clients are found.
-    -- LSP is inactive, so re-trigger FileType autocommands -- (User-provided comment)
-    -- This will make lspconfig (or your setup) attach the clients again -- (User-provided comment)
-    print("Starting LSP for current buffer...") -- Outputs a status message.
-    vim.cmd("doautocmd <nomodeline> FileType") -- Tricks Neovim into re-evaluating the buffer's filetype, which forces lspconfig to boot up the relevant server (e.g., OmniSharp or jdtls).
-  end -- Ends the conditional logic.
-end -- Ends the toggle_lsp function.
-vim.keymap.set("n", "<leader>tlsp", toggle_lsp, { desc = "Toggle LSP (Start/Stop)" }) -- Binds Space+tt to execute the custom toggle_lsp logic.
-
--- FULL EDITED CODE SNIPPET (Lua)
--- Add this to your configuration structure (e.g., in a spec that runs after 'nvim-lspconfig') -- (User-provided context).
-
---Disable by default
--- vim.lsp.inlay_hint.enable(false) -- (Commented out) Native command to ensure hints start disabled.
---
-vim.keymap.set("n", "<leader>ti", function() -- Binds Space+ti to toggle native LSP inlay hints.
-  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled()) -- Queries the current state of inlay hints and flips the boolean to enable or disable them dynamically.
-end, { desc = "Toggle Inlay Hints" }) -- Closes the function and sets the description.
-
--- Delete the default mapping first to ensure no conflicts
-pcall(vim.keymap.del, "n", "<leader>wv")
-
--- Create the new mapping
--- Uses standard commands to split vertically and open the Netrw backup.
-vim.keymap.set("n", "<leader>wv", "<cmd>vsplit<cr><cmd>Ex<cr>", {
-  desc = "Split window vertically and open Netrw",
-})
-
--- --- THE "SMART ENTER" FIX ---
--- This specifically fixes the <div>|</div> expansion issue
-vim.keymap.set("i", "<CR>", function()
-  local line = vim.api.nvim_get_current_line()
-  local col = vim.api.nvim_win_get_cursor(0)[2]
-
-  -- Check if cursor is between '>' and '<'
-  local char_before = line:sub(col, col)
-  local char_after = line:sub(col + 1, col + 1)
-
-  if char_before == ">" and char_after == "<" then
-    return "<CR><Esc>O"
+local function toggle_lsp()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients > 0 then
+    vim.lsp.stop_client(clients)
+    vim.notify("Stopped LSP clients for this buffer")
+  else
+    vim.cmd("doautocmd <nomodeline> FileType")
+    vim.notify("Started LSP clients for this buffer")
   end
+end
 
-  return "<CR>"
-end, { expr = true, replace_keycodes = true, desc = "Expand tags on Enter" })
+map("n", "<leader>tlsp", toggle_lsp, { desc = "Toggle LSP" })
+map("n", "<leader>ti", function()
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+end, { desc = "Toggle Inlay Hints" })
 
-vim.keymap.set("i", "jj", "<Esc>", { noremap = false })
-vim.keymap.set("i", "jk", "<Esc>", { noremap = false })
+-- Insert-mode conveniences.
+map("i", "<CR>", function()
+  local line = vim.api.nvim_get_current_line()
+  local column = vim.api.nvim_win_get_cursor(0)[2]
+  return line:sub(column, column) == ">" and line:sub(column + 1, column + 1) == "<" and "<CR><Esc>O" or "<CR>"
+end, { expr = true, replace_keycodes = true, desc = "Expand Tags on Enter" })
+map("i", "jj", "<Esc>")
+map("i", "jk", "<Esc>")
 
--- replace
-vim.keymap.set("n", "<leader>r", [[:%s/\<<C-r><C-w>\>//gcI<Left><Left><Left><Left>]], {
-  desc = "Replace word under cursor with confirm",
+map("n", "<leader>r", [[:%s/\<<C-r><C-w>\>//gcI<Left><Left><Left><Left>]], {
+  desc = "Replace Word Under Cursor",
 })
-
--- Start Metro Bundler
-vim.keymap.set("n", "<leader>rs", "<cmd>OverseerRunCmd npx expo start<cr>", { desc = "Start Metro/Expo" })
-
--- Run on Android Emulator
-vim.keymap.set("n", "<leader>ra", "<cmd>OverseerRunCmd npx expo run:android<cr>", { desc = "Run Android" })
+map("n", "<leader>rs", "<cmd>OverseerRunCmd npx expo start<cr>", { desc = "Start Metro/Expo" })
+map("n", "<leader>ra", "<cmd>OverseerRunCmd npx expo run:android<cr>", { desc = "Run Android" })

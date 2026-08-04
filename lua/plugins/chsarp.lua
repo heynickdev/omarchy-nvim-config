@@ -9,7 +9,6 @@ return {
     },
   },
 
-
   -- The workflow plugin (Handles running, building, testing, and debugging)
   {
     "GustavEikaas/easy-dotnet.nvim",
@@ -17,7 +16,7 @@ return {
       "nvim-lua/plenary.nvim",
       "mfussenegger/nvim-dap",
       -- Assumes you are using telescope, fzf-lua, or snacks for UI picking.
-      "nvim-telescope/telescope.nvim", 
+      "nvim-telescope/telescope.nvim",
     },
     ft = { "cs", "fsharp", "razor" },
     config = function()
@@ -29,7 +28,7 @@ return {
           viewmode = "split",
         },
         terminal = function(path, action, args)
-          -- Customize how the terminal opens for runs. 
+          -- Customize how the terminal opens for runs.
           -- You can change this to use toggleterm or a floating window.
           vim.cmd("vsplit")
           vim.cmd("term " .. action .. " " .. args)
@@ -53,5 +52,5 @@ return {
         dotnet.secrets()
       end, { desc = "Manage .NET User Secrets" })
     end,
-  }
+  },
 }

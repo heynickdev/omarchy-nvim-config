@@ -16,7 +16,6 @@ local excluded_filetypes = {
   "lspinfo",
   "null-ls-info",
   "quickfix",
-  "prompt",
   "terminal",
   "harpoon",
   "undotree",

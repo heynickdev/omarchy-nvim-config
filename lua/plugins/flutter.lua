@@ -165,24 +165,4 @@ return {
       require("flutter-tools").setup(opts)
     end,
   },
-
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = {
-      ensure_installed = {
-        "dart",
-        "yaml",
-        "json",
-      },
-    },
-  },
-
-  {
-    "stevearc/conform.nvim",
-    opts = {
-      formatters_by_ft = {
-        dart = { "dart_format" },
-      },
-    },
-  },
 }
