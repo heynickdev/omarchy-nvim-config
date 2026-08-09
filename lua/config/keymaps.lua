@@ -202,6 +202,45 @@ map("x", "<leader>d", '"_d', { desc = "Delete Selection into Nothing" })
 map("n", "<leader>D", '"_D', { desc = "Delete to End of Line into Nothing" })
 map("n", "<leader>dd", '"_dd', { desc = "Delete Line into Nothing" })
 
+-- Manual format + import organization. Auto-format/imports on save are disabled
+-- (`vim.g.autoformat = false` in options.lua and no BufWritePre organizer), so
+-- this is the only place they run. Normal mode formats then organizes imports
+-- (which removes unused ones once you've finished editing); visual mode only
+-- formats the selection.
+local function organize_imports()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients == 0 then
+    return
+  end
+
+  local enc = clients[1].offset_encoding or "utf-16"
+  local params = vim.lsp.util.make_range_params(0, enc)
+
+  local action_params = vim.tbl_extend("force", params, {
+    context = { only = { "source.organizeImports" } },
+  })
+
+  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", action_params, 1000)
+
+  for cid, res in pairs(result or {}) do
+    for _, r in pairs(res.result or {}) do
+      if r.edit then
+        local client = vim.lsp.get_client_by_id(cid)
+        local client_enc = (client and client.offset_encoding) or "utf-16"
+        vim.lsp.util.apply_workspace_edit(r.edit, client_enc)
+      end
+    end
+  end
+end
+
+map("n", "<leader>cf", function()
+  LazyVim.format({ force = true })
+  organize_imports()
+end, { desc = "Format & Organize Imports" })
+map("x", "<leader>cf", function()
+  LazyVim.format({ force = true })
+end, { desc = "Format Selection" })
+
 local function toggle_lsp()
   local clients = vim.lsp.get_clients({ bufnr = 0 })
   if #clients > 0 then
