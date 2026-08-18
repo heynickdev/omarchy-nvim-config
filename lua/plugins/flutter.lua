@@ -1,3 +1,5 @@
+-- ~/.config/nvim/lua/plugins/flutter.lua
+
 local function is_flutter_log_buf(buf)
   if not vim.api.nvim_buf_is_valid(buf) then
     return false
@@ -66,6 +68,27 @@ local function toggle_flutter_logs()
   vim.cmd("FlutterLogToggle")
 end
 
+local function setup_flutter_auto_reload()
+  local group = vim.api.nvim_create_augroup("FlutterAutoReload", {
+    clear = true,
+  })
+
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    group = group,
+    pattern = "*.dart",
+    callback = function()
+      if vim.fn.exists(":FlutterReload") ~= 2 then
+        return
+      end
+
+      vim.schedule(function()
+        pcall(vim.cmd, "FlutterReload")
+      end)
+    end,
+    desc = "Automatically hot reload Flutter after saving a Dart file",
+  })
+end
+
 return {
   {
     "nvim-flutter/flutter-tools.nvim",
@@ -75,6 +98,7 @@ return {
       "stevearc/dressing.nvim",
       "mfussenegger/nvim-dap",
     },
+
     keys = {
       { "<leader>Fr", "<cmd>FlutterRun<cr>", desc = "Flutter Run" },
       { "<leader>Fd", "<cmd>FlutterDebug<cr>", desc = "Flutter Debug" },
@@ -97,6 +121,7 @@ return {
       { "<leader>Fo", "<cmd>FlutterOutlineToggle<cr>", desc = "Flutter Outline" },
       { "<leader>Fp", "<cmd>FlutterPubGet<cr>", desc = "Flutter Pub Get" },
     },
+
     opts = function()
       local platform = require("config.platform")
 
@@ -115,12 +140,11 @@ return {
         debugger = {
           enabled = true,
 
-          -- Important:
-          -- false means <leader>Fr / FlutterRun will NOT open DAP panes.
-          -- Use <leader>Fd / FlutterDebug when you actually want debugging.
+          -- FlutterRun will run normally without opening DAP panes.
+          -- Use FlutterDebug when debugging is actually required.
           run_via_dap = false,
 
-          -- Stops Dart from breaking inside SDK internals like errors_patch.dart.
+          -- Prevent Dart from stopping inside SDK internals.
           exception_breakpoints = {},
           evaluate_to_string_in_debug_views = false,
         },
@@ -161,8 +185,11 @@ return {
         },
       }
     end,
+
     config = function(_, opts)
       require("flutter-tools").setup(opts)
+
+      setup_flutter_auto_reload()
     end,
   },
 }
